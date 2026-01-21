@@ -48,7 +48,7 @@ The founders' insight was simple: traditional search engines give you a bunch of
 
 The key innovation was **citations**. CEO Aravind Srinivas said: "Citations are the best way to connect search and LLM." Perplexity uses RAG (Retrieval-Augmented Generation) to search the web in real-time, then has the LLM synthesize answers with source annotations.
 
-That same month, ChatGPT was released, but it had no internet access—it could only answer using training data, unable to fetch real-time information.
+Just a week earlier (November 30), ChatGPT had just been released, but it had no internet access—it could only answer using training data, unable to fetch real-time information. Perplexity chose a different path from the start: search + LLM.
 
 ### 2023: AI Search Battlefield
 
