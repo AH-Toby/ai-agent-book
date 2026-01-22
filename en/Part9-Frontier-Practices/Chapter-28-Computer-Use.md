@@ -1,4 +1,4 @@
-# Chapter 27: Computer Use
+# Chapter 28: Computer Use
 
 > **Computer Use gives Agents "eyes" and "hands," enabling them to see screens, click mice, and type on keyboards like humans do. This is the ultimate weapon for breaking through API boundaries -- but also the most easily uncontrollable capability. Production environments must include sandboxing and human confirmation checkpoints.**
 

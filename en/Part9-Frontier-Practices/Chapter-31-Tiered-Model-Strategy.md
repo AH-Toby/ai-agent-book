@@ -1,4 +1,4 @@
-# Chapter 30: Tiered Model Strategy
+# Chapter 31: Tiered Model Strategy
 
 > **"Tiered routing can save 80% costs" -- but only if you can correctly judge task complexity, which is harder than it sounds.**
 
