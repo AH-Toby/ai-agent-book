@@ -7,8 +7,9 @@
 >
 > - **Human-in-the-Loop**：第 15 章 (15.12) — 人机协作、升级触发、中断接管、信任升级
 > - **MCP 协议**：第 4 章 — Model Context Protocol 工具标准化
-> - **Computer Use**：第 27 章 — 浏览器/桌面自动化
-> - **Agentic Coding**：第 28 章 — Claude Code / Devin 模式
+> - **Deep Research**：第 27 章 — 系统化深度调研、多 Agent 协作
+> - **Computer Use**：第 28 章 — 浏览器/桌面自动化
+> - **Agentic Coding**：第 29 章 — Claude Code / Devin 模式
 
 ---
 
@@ -112,10 +113,11 @@
 
 | 章节 | 标题 | 核心内容 |
 |------|------|----------|
-| 第 27 章 | [Computer Use](./Part9-前沿实践/第27章：Computer%20Use.md) | 浏览器自动化、桌面操作、GUI 交互 |
-| 第 28 章 | [Agentic Coding](./Part9-前沿实践/第28章：Agentic%20Coding.md) | 代码生成、自动修复、开发辅助 |
-| 第 29 章 | [Background Agents](./Part9-前沿实践/第29章：Background%20Agents.md) | 后台执行、异步任务、长时运行 |
-| 第 30 章 | [分层模型策略](./Part9-前沿实践/第30章：分层模型策略.md) | 模型路由、成本优化、能力匹配 |
+| 第 27 章 | [Deep Research](./Part9-前沿实践/第27章：Deep-Research.md) | 系统化深度调研、多 Agent 协作、覆盖率评估 |
+| 第 28 章 | [Computer Use](./Part9-前沿实践/第28章：Computer-Use.md) | 浏览器自动化、桌面操作、GUI 交互 |
+| 第 29 章 | [Agentic Coding](./Part9-前沿实践/第29章：Agentic-Coding.md) | 代码生成、自动修复、开发辅助 |
+| 第 30 章 | [Background Agents](./Part9-前沿实践/第30章：Background-Agents.md) | 后台执行、异步任务、长时运行 |
+| 第 31 章 | [分层模型策略](./Part9-前沿实践/第31章：分层模型策略.md) | 模型路由、成本优化、能力匹配 |
 
 ---
 
@@ -133,7 +135,7 @@
 
 | 指标 | 数值 |
 |------|------|
-| 总章节数 | 30 章 |
+| 总章节数 | 31 章 |
 | 附录数 | 3 篇 |
 | Part 数量 | 9 个主题 |
 | 参考实现 | [Shannon OSS](https://github.com/Kocoro-lab/Shannon) |
@@ -168,6 +170,6 @@ Part 7 + Part 8
 
 ### 前沿热点（1-2 天）
 ```
-第 4 章(MCP) → 第 15 章 15.12(HITL) → 第 27 章(Computer Use) → 第 28 章(Agentic Coding)
+第 4 章(MCP) → 第 15 章 15.12(HITL) → 第 27 章(Deep Research) → 第 28 章(Computer Use) → 第 29 章(Agentic Coding)
 ```
-目标：了解 2025-2026 年最热门的 Agent 话题（MCP、Human-in-the-Loop、Computer Use、Agentic Coding）
+目标：了解 2025-2026 年最热门的 Agent 话题（MCP、Human-in-the-Loop、Deep Research、Computer Use、Agentic Coding）

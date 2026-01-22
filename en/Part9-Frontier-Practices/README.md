@@ -1,21 +1,37 @@
 # Part 9: Frontier Practices
 
-> Latest hot topics: Computer Use, Agentic Coding, Background Agents, Tiered Model Strategy
+> Latest hot topics: Deep Research, Computer Use, Agentic Coding, Background Agents, Tiered Model Strategy
 
 ## Chapter List
 
 | Chapter | Title | Core Question | Shannon Reference |
 |---------|-------|---------------|-------------------|
-| 27 | Computer Use | How do Agents operate browsers and desktops? | `config/models.yaml` multimodal |
-| 28 | Agentic Coding | How to build code generation Agents? | `file_ops.py`, `wasi_sandbox.rs` |
-| 29 | Background Agents | How to implement async long-running tasks? | `schedules/manager.go` |
-| 30 | Tiered Model Strategy | How to optimize 50-70% of costs? | `config/models.yaml`, `manager.py` |
+| 27 | Deep Research | How to implement systematic deep research? | `roles/deep_research/`, `workflows/strategies/research.go` |
+| 28 | Computer Use | How do Agents operate browsers and desktops? | `config/models.yaml` multimodal |
+| 29 | Agentic Coding | How to build code generation Agents? | `file_ops.py`, `wasi_sandbox.rs` |
+| 30 | Background Agents | How to implement async long-running tasks? | `schedules/manager.go` |
+| 31 | Tiered Model Strategy | How to optimize 50-70% of costs? | `config/models.yaml`, `manager.py` |
 
 ---
 
 ## Chapter Summaries
 
-### Chapter 27: Computer Use
+### Chapter 27: Deep Research
+
+> From "search it" to "research it": Making AI think like a professional researcher
+
+**Core Content**:
+- **Essential Difference**: Not searching more, but knowing how to think—planning, adaptation, verification, synthesis
+- **Two Architectures**: Single Agent (strong reasoning) vs Multi-Agent (collaboration)
+- **Anthropic Approach**: Orchestrator-Worker architecture, core insight is "compression"
+- **Core Decisions**: Architecture choice, stopping conditions, citation verification, failure recovery
+- **Quality Assurance**: Citation tracking, coverage assessment, time awareness, multi-language
+
+**Shannon Code**: `roles/deep_research/deep_research_agent.py`, `workflows/strategies/research.go`
+
+---
+
+### Chapter 28: Computer Use
 
 > When Agents get "eyes" and "hands": From calling APIs to operating real interfaces
 
@@ -30,7 +46,7 @@
 
 ---
 
-### Chapter 28: Agentic Coding
+### Chapter 29: Agentic Coding
 
 > Making Agents your programming partner: From code generation to complete development workflows
 
@@ -45,7 +61,7 @@
 
 ---
 
-### Chapter 29: Background Agents
+### Chapter 30: Background Agents
 
 > Keep tasks running in the background: Temporal scheduling and scheduled task systems
 
@@ -60,7 +76,7 @@
 
 ---
 
-### Chapter 30: Tiered Model Strategy
+### Chapter 31: Tiered Model Strategy
 
 > Smart routing to achieve 50-70% cost reduction: Not every task needs the strongest model
 
@@ -80,6 +96,7 @@
 
 After completing this Part, you will be able to:
 
+- [ ] Understand Deep Research's architecture choices and core design decisions
 - [ ] Understand Computer Use's perceive-decide-execute loop
 - [ ] Design safe Agentic Coding workflows (sandbox + reflection)
 - [ ] Use Temporal Schedule API to implement scheduled background tasks
@@ -116,10 +133,11 @@ Shannon/
 
 | Topic | Representative Products | Shannon Implementation | Chapter |
 |-------|------------------------|------------------------|---------|
-| Computer Use | Claude Computer Use, similar UI agents | Multimodal + Tool extensions | Ch27 |
-| Agentic Coding | Claude Code, Cursor, Windsurf | WASI sandbox + File tools | Ch28 |
-| Background Agents | Claude Code Ctrl+B | Temporal Schedule API | Ch29 |
-| Cost Optimization | Enterprise cost reduction needs | Three-tier model strategy | Ch30 |
+| Deep Research | Perplexity, Gemini, ChatGPT | Multi-Agent + Coverage assessment | Ch27 |
+| Computer Use | Claude Computer Use, Manus | Multimodal + Tool extensions | Ch28 |
+| Agentic Coding | Claude Code, Cursor, Windsurf | WASI sandbox + File tools | Ch29 |
+| Background Agents | Claude Code Ctrl+B | Temporal Schedule API | Ch30 |
+| Cost Optimization | Enterprise cost reduction needs | Three-tier model strategy | Ch31 |
 
 ---
 
@@ -155,10 +173,11 @@ Frontier capability modules covered in this Part:
 
 | Module | Chapter | Capability |
 |--------|---------|------------|
-| Computer Use | Chapter 27 | Web browsing, content extraction |
-| Agentic Coding | Chapter 28 | Analysis script generation |
-| Background Agents | Chapter 29 | Scheduled research reports |
-| Tiered Models | Chapter 30 | Smart model selection |
+| Deep Research | Chapter 27 | Systematic deep research |
+| Computer Use | Chapter 28 | Web browsing, content extraction |
+| Agentic Coding | Chapter 29 | Analysis script generation |
+| Background Agents | Chapter 30 | Scheduled research reports |
+| Tiered Models | Chapter 31 | Smart model selection |
 
 **Final Form**:
 ```
@@ -167,7 +186,7 @@ User: "Generate an AI industry daily report at 9 AM every day"
 Research Agent v0.9:
 1. [Schedule] Create Cron scheduled task (0 9 * * *)
 2. [Tiered] Use Small model for complexity assessment
-3. [Multi-Agent] Parallel search/analysis/writing
+3. [Deep Research] Systematic research, coverage-driven
 4. [Browser] Access websites without APIs for content extraction
 5. [Coding] Generate data visualization scripts
 6. [Budget] Control per-execution cost < $2

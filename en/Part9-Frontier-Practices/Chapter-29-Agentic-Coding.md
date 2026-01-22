@@ -1,4 +1,4 @@
-# Chapter 28: Agentic Coding
+# Chapter 29: Agentic Coding
 
 > **Agentic Coding isn't an upgraded version of code completion -- it's about enabling Agents to understand codebases like developers, plan implementations, write code, run tests, and fix bugs. It requires understanding the entire codebase structure, not just the current file -- this is true "autonomous programming," and also the ultimate test of sandbox security.**
 

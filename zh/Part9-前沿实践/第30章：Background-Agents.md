@@ -1,4 +1,4 @@
-# 第 29 章：Background Agents
+# 第 30 章：Background Agents
 
 > **Background Agent 让任务脱离用户会话独立运行——定时调度、持续监控、故障自动恢复。这是 Agent 从"工具"进化到"员工"的关键一步，但也意味着失去实时人工监督，必须在设计时预埋足够的安全和预算控制。**
 

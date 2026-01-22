@@ -1,4 +1,4 @@
-# Chapter 29: Background Agents
+# Chapter 30: Background Agents
 
 > **Background Agents let tasks run independently from user sessions -- scheduled execution, continuous monitoring, automatic failure recovery. This is a key step in evolving Agents from "tools" to "employees," but it also means losing real-time human supervision, requiring budget controls and safety measures to be designed in from the start.**
 
