@@ -1,10 +1,23 @@
 # Chapter 5: Skills System
 
-> **A Skill isn't a magic template -- it just packages System Prompt, tool whitelist, and parameter constraints together. If the role design is bad, no matter how pretty the packaging, it won't help.**
+> **Packaging System Prompt, tool whitelist, and parameter constraints into reusable configurations -- this concept has different implementations across systems, but the core idea remains the same.**
 
 ---
 
-## 5.1 What Exactly Is a Skill?
+## Terminology Note
+
+| Term in This Chapter | Corresponding System | Description |
+|---------------------|---------------------|-------------|
+| **Presets** | Shannon | Role presets, defined in `roles/presets.py` |
+| **Agent Skills** | Anthropic Open Standard | Cross-platform skill specification, `.claude/skills/` etc. |
+
+This chapter first covers general concepts, then introduces both Shannon Presets and Agent Skills implementations.
+
+---
+
+# Part A: General Concepts
+
+## 5.1 What Is a Skills System?
 
 In the previous chapters, we covered individual Agent tools and reasoning capabilities. But a problem is starting to emerge: the same Agent fails when you switch tasks.
 
@@ -16,39 +29,36 @@ I tried it -- complete failure. The code review Prompt talks about "finding bugs
 
 In the end, I spent an afternoon reconfiguring a "researcher" role. Two sets of configurations, completely different.
 
-**This is the problem Skills solve -- you don't need to reconfigure the role every time; preset roles can be switched with one click.** Use `code_reviewer` role for code review, `researcher` role for market research.
+**This is the problem Skills solve -- preset role configurations can be switched with one click.** Use `code_reviewer` for code review, `researcher` for market research.
 
-In one sentence: **Skill = System Prompt + Tool Whitelist + Parameter Constraints**
+### One-Sentence Definition
+
+> **Skills System = System Prompt + Tool Whitelist + Parameter Constraints packaged together**
 
 ![Skill Structure](assets/skill-structure.svg)
 
-For example, a "researcher" Skill:
+### Why Is It Needed?
 
-```python
-"research": {
-    "system_prompt": "You are a research assistant. Gather facts from authoritative sources...",
-    "allowed_tools": ["web_search", "web_fetch"],
-    "caps": {"max_tokens": 16000, "temperature": 0.3},
-}
-```
+1. **Avoid reconfiguring every time** -- switching tasks doesn't require rewriting Prompts from scratch
+2. **Reduce omissions and errors** -- reference by name, won't forget some parameter
+3. **Share team best practices** -- good configurations can be reused
 
-For example, a "critic" Skill:
+### Two Implementation Approaches
 
-```python
-"critic": {
-    "system_prompt": "You are a critical reviewer. Point out flaws and suggest fixes.",
-    "allowed_tools": ["file_read"],
-    "caps": {"max_tokens": 800, "temperature": 0.2},
-}
-```
+| Approach | Representative | Characteristics |
+|----------|---------------|-----------------|
+| **Framework Built-in** | Shannon Presets | Code-level configuration, Python dictionaries |
+| **Cross-platform Standard** | Agent Skills | File-level configuration, Markdown + YAML |
 
-When invoking, just say "I want to use the research Skill," and the configuration loads automatically.
+Let's look at these two implementations.
 
 ---
 
+# Part B: Shannon Presets
+
 ## 5.2 Shannon's Presets Registry
 
-Shannon calls Skills "Presets," stored in a dictionary:
+Shannon implements skills as Presets, stored in `roles/presets.py`:
 
 ```python
 _PRESETS: Dict[str, Dict[str, object]] = {
@@ -110,9 +120,9 @@ The last point is very important. A pitfall I stepped on: didn't add `.copy()`, 
 
 ---
 
-## 5.3 A Complex Skill Example: Deep Research Agent
+## 5.3 A Complex Preset Example: Deep Research Agent
 
-Simple Skills are just a few lines of configuration. But complex Skills need more detailed instructions.
+Simple Presets are just a few lines of configuration. But complex Presets need more detailed instructions.
 
 Shannon has a `deep_research_agent` with a System Prompt over 50 lines:
 
@@ -155,7 +165,7 @@ Shannon has a `deep_research_agent` with a System Prompt over 50 lines:
 },
 ```
 
-This Skill has several design highlights:
+This Preset has several design highlights:
 
 1. **Temporal awareness**: Requires Agent to mark years, avoiding outdated information
 2. **Progressive research**: From broad to narrow, evaluate whether to continue after each tool call
@@ -166,9 +176,9 @@ I've found that **limiting tool call count** is particularly useful. Without thi
 
 ---
 
-## 5.4 Domain Expert Skill: GA4 Analyst
+## 5.4 Domain Expert Preset: GA4 Analyst
 
-Generic Skills suit broad scenarios, but some domains need specialized "experts."
+Generic Presets suit broad scenarios, but some domains need specialized "experts."
 
 For example, Google Analytics 4 analyst:
 
@@ -199,16 +209,16 @@ GA4_ANALYTICS_PRESET = {
 }
 ```
 
-Domain Skills have some special configurations:
+Domain Presets have some special configurations:
 
 - `provider_override`: Force use of specific Provider (e.g., some tasks work better with GPT)
 - `preferred_model`: Specify preferred model
 
-These aren't in generic Skills.
+These aren't in generic Presets.
 
 ### Dynamic Tool Factory
 
-Domain Skills have another common need: **dynamically creating tools based on configuration**.
+Domain Presets have another common need: **dynamically creating tools based on configuration**.
 
 For example, GA4 tools need to bind to specific accounts:
 
@@ -229,15 +239,15 @@ def create_ga4_tool_functions(property_id: str, credentials_path: str):
     }
 ```
 
-This way, different users can use different GA4 accounts, same Skill but bound to different credentials.
+This way, different users can use different GA4 accounts, same Preset but bound to different credentials.
 
 ---
 
 ## 5.5 Prompt Template Rendering
 
-Sometimes the same Skill needs to inject different variables based on context.
+Sometimes the same Preset needs to inject different variables based on context.
 
-For example, data analytics Skill:
+For example, data analytics Preset:
 
 ```python
 "data_analytics": {
@@ -293,7 +303,7 @@ You are a data analytics assistant...
 
 ## 5.6 Runtime Dynamic Enhancement
 
-Skills define static configuration, but runtime still dynamically injects some content:
+Presets define static configuration, but runtime still dynamically injects some content:
 
 ```python
 # Inject current date
@@ -310,13 +320,13 @@ if context.get("research_mode"):
     system_prompt += "\n\nRESEARCH MODE: Do not rely on snippets. Use web_fetch to read full content."
 ```
 
-This way, Skill's static configuration combined with runtime context becomes the final System Prompt sent to the LLM.
+This way, Preset's static configuration combined with runtime context becomes the final System Prompt sent to the LLM.
 
 ---
 
 ## 5.7 Vendor Adapter Pattern
 
-For Skills that need deep integration with external systems, Shannon uses a clever design:
+For Presets that need deep integration with external systems, Shannon uses a clever design:
 
 ```
 roles/
@@ -354,9 +364,9 @@ Benefits:
 
 ---
 
-## 5.8 Designing a New Skill
+## 5.8 Designing a New Preset
 
-Suppose you want to create a "code reviewer" Skill, how to design it?
+Suppose you want to create a "code reviewer" Preset, how to design it?
 
 ```python
 "code_reviewer": {
@@ -474,29 +484,291 @@ except Exception:
 
 ---
 
-## 5.10 How Do Other Frameworks Do It?
+# Part C: Agent Skills
 
-| Framework | Concept Name | Features |
-|-----------|--------------|----------|
-| **CrewAI** | Agent Role | Includes role, goal, backstory |
-| **AutoGen** | Agent Config | Includes system_message, llm_config |
-| **LangGraph** | Node State | Configured in graph nodes |
-| **Dify** | Prompt Template | Visual editing |
+## 5.10 Agent Skills: Solving the Context Bloat Problem
 
-The core idea is the same: package role configuration for reuse. Differences are in:
-- Configuration granularity (CrewAI has backstory, Shannon doesn't)
-- Configuration method (code vs visual vs YAML)
-- Depth of framework integration
+We've looked at Shannon's Presets. Now let's examine another skills system: Agent Skills.
+
+### Problem: Context Window Is a Scarce Resource
+
+In 2025, AI coding tools exploded. Claude Code, Cursor, GitHub Copilot, Codex CLI... Developers quickly discovered a problem: **context window isn't enough**.
+
+Take MCP (Model Context Protocol) as an example. MCP lets Agents connect to external services -- GitHub, Jira, databases. Sounds great, but there's a cost:
+
+| MCP Server | Tool Count | Token Consumption |
+|------------|-----------|-------------------|
+| GitHub Official | 93 tools | ~55,000 tokens |
+| Task Master | 59 tools | ~45,000 tokens |
+
+One Claude Code user reported: after enabling several MCPs, context usage reached 178k/200k (89%), with MCP tool definitions alone taking up 63.7k. Before even starting work, the context was nearly full.
+
+The root cause: **MCP loads all tool definitions at startup**. Whether you use them or not, the schemas for 93 GitHub tools get stuffed into the context.
+
+### Skills Solution: Progressive Disclosure
+
+In October 2025, Anthropic introduced Skills in Claude Code. The core design philosophy: **load on demand, not all at once**.
+
+Officially called "Progressive Disclosure," it's compared to a well-organized manual:
+
+> "First the table of contents, then specific chapters, finally detailed appendices."
+
+Technically, it's three layers:
+
+1. **Metadata layer**: At startup, only load `name` and `description`, about 30-50 tokens per Skill
+2. **Content layer**: Only load the full `SKILL.md` when user request matches, typically < 5k tokens
+3. **Extension layer**: Referenced `reference.md`, `examples/`, `scripts/` only load when actually needed
+
+What's the effect? **You can install hundreds of Skills, but only consume a few thousand tokens at startup**. As the official docs put it: "the amount of context that can be bundled into a skill is effectively unbounded."
+
+### Relationship with MCP
+
+Skills aren't meant to replace MCP, but complement it:
+
+- **MCP is the "pipeline"** -- connecting to external service APIs
+- **Skills are the "manual"** -- teaching Agent how to use these APIs to complete tasks
+
+For example: you connect to Jira via MCP, but Agent doesn't know which endpoints to call or what parameters to pass for "creating a sprint." That's when you need a "Jira Project Management" Skill to explain the complete workflow.
+
+And Skills' own Token efficiency also alleviates the context pressure from MCP -- MCP connections consume lots of tokens, but Skill instructions only load when needed.
+
+### Timeline
+
+| Time | Event |
+|------|-------|
+| February 2025 | Claude Code released |
+| October 2025 | Claude Code introduces Skills; Simon Willison's article sparks interest |
+| December 2025 | OpenAI Codex CLI adds Skills support; Anthropic releases open standard |
+| January 2026 | Google Antigravity, Cursor and others follow |
+
+---
+
+## 5.11 Agent Skills Format Specification
+
+### Directory Structure
+
+A Skill is a directory, with `SKILL.md` as the entry point:
+
+```
+my-skill/
+├── SKILL.md           # Main instructions (required)
+├── template.md        # Template file (optional)
+├── reference.md       # Detailed reference docs (optional)
+├── examples/
+│   └── sample.md      # Example outputs (optional)
+└── scripts/
+    └── helper.py      # Executable scripts (optional)
+```
+
+`SKILL.md` is required, other files are added as needed.
+
+### SKILL.md Format
+
+```yaml
+---
+name: my-skill
+description: What this skill does, when to use it
+allowed-tools: Read, Grep, Glob
+---
+
+## Your Instructions
+
+When executing this task:
+1. First step...
+2. Second step...
+```
+
+### Frontmatter Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | No | Skill name, defaults to directory name. Lowercase letters, numbers, hyphens |
+| `description` | Recommended | Claude uses this to determine when to auto-load |
+| `allowed-tools` | No | Tool whitelist, limits which tools the skill can use |
+| `disable-model-invocation` | No | Set to `true` to prevent Claude from auto-invoking |
+| `user-invocable` | No | Set to `false` to hide from `/` menu |
+| `context` | No | Set to `fork` to run in a sub-agent |
+| `agent` | No | Specify sub-agent type (`Explore`, `Plan`, etc.) |
+
+### Invocation Control
+
+Two fields control who can invoke the skill:
+
+- `disable-model-invocation: true`: Only users can invoke (for operations with side effects, like deployment)
+- `user-invocable: false`: Only Claude can invoke (for background knowledge, users don't need to trigger directly)
+
+### Advanced Features
+
+**Variable Substitution**:
+
+```yaml
+---
+name: fix-issue
+description: Fix a GitHub issue
+---
+
+Fix GitHub issue $ARGUMENTS:
+1. Read issue description
+2. Implement fix
+3. Create commit
+```
+
+When running `/fix-issue 123`, `$ARGUMENTS` is replaced with `123`.
+
+**Dynamic Context Injection**:
+
+```yaml
+---
+name: pr-summary
+description: Summarize PR changes
+---
+
+## PR Context
+- PR diff: !`gh pr diff`
+- PR comments: !`gh pr view --comments`
+
+## Task
+Summarize the changes in this PR...
+```
+
+The `` !`command` `` syntax executes the command first, injecting the output into the Skill content.
+
+**Script Execution**:
+
+Skills can include Python or Bash scripts that Claude can execute:
+
+```
+my-skill/
+├── SKILL.md
+└── scripts/
+    └── analyze.py    # Claude can run this script
+```
+
+---
+
+## 5.12 A Simple Example
+
+Create a "code review" skill. Create `code-review/SKILL.md` in the Skills directory:
+
+```yaml
+---
+name: code-review
+description: Review code for bugs, security issues, maintainability problems. Use when user says "review", "audit", or "check this code".
+allowed-tools: Read, Grep, Glob
+---
+
+## Review Standards
+
+1. **Security Issues** (highest priority)
+   - SQL injection, XSS, command injection
+   - Hardcoded secrets
+
+2. **Logic Errors**
+   - Null pointers, out of bounds, resource leaks
+
+3. **Maintainability**
+   - Code duplication, overly long functions, unclear naming
+
+## Output Format
+
+For each issue:
+- **Severity**: CRITICAL / HIGH / MEDIUM / LOW
+- **Location**: file:line
+- **Issue**: Brief description
+- **Suggestion**: How to fix
+
+## Rules
+
+- Only report issues with MEDIUM+ confidence
+- Report at most 10 most important issues
+- Skip pure style issues unless explicitly requested
+```
+
+**Testing Methods**:
+
+- Auto-trigger: Say "help me review this code," Agent will automatically match and load
+- Manual trigger: Type `/code-review src/auth/`
+
+---
+
+## 5.13 Official Resources and Ecosystem
+
+### Official Resources
+
+| Resource | Link | Description |
+|----------|------|-------------|
+| Agent Skills Spec | [agentskills.io](https://agentskills.io) | Official standard definition and SDK |
+| Anthropic Skills Repo | [github.com/anthropics/skills](https://github.com/anthropics/skills) | Official example collection |
+| Claude Code Docs | [code.claude.com/docs/en/skills](https://code.claude.com/docs/en/skills) | Usage guide |
+| Skills Directory | [claude.com/connectors](https://claude.com/connectors) | Partner Skills directory |
+
+### Skills Directory
+
+In December 2025, Anthropic also launched the Skills Directory -- a skill distribution platform where users can browse and enable Skills built by partners.
+
+Initial partners include:
+
+| Partner | Skills Provided |
+|---------|----------------|
+| **Atlassian** | Jira and Confluence integration -- turn requirements docs into todos, generate status reports, retrieve company knowledge base |
+| **Figma** | Design understanding -- Claude can understand context, details, and intent of Figma designs, accurately converting to code |
+| **Notion** | Document and database operations |
+| **Canva** | Design resource generation |
+| **Stripe** | Payment integration workflows |
+| **Zapier** | Automation connections |
+| **Vercel** | Deployment workflows |
+| **Cloudflare** | Edge computing configuration |
+
+These Skills can work with corresponding MCP connectors -- MCP provides API connections, Skills provide workflow knowledge.
+
+---
+
+## Beyond This Chapter: A Unified View of Tools, MCP, and Skills
+
+Having covered Skills, we can step back and see how the concepts in Part 2 relate to each other.
+
+**Essence**: Tools, MCP, and Skills all inject information into the Agent's context to supplement its capabilities.
+
+| Mechanism | What's Injected | What Capability It Adds |
+|-----------|-----------------|------------------------|
+| Tools | Function definitions + execution logic | Interaction with external systems |
+| MCP | Tool definitions (from external services) | Connection to external services |
+| Skills | Instructions + workflow knowledge | Domain expertise |
+
+The relationship between the three:
+
+```
+Tools <- Basic capability units
+  ↑
+MCP <- Standard way for external services to expose Tools
+  ↑
+Skills <- Teaches Agent how to combine Tools to complete tasks
+```
+
+**Common design constraint**: Context window is a scarce resource.
+
+So regardless of changes, design must:
+
+- **Load on demand** -- don't stuff in what you won't use
+- **Minimize Token consumption** -- metadata first, content deferred
+- **Be composable** -- small modules combine into big capabilities
+- **Least privilege** -- only give tools necessary for the task
+
+These four principles run through all chapters in Part 2.
 
 ---
 
 ## Chapter Summary
 
-1. **Skill = System Prompt + Tool Whitelist + Parameter Constraints** -- packaging role configuration into reusable units
-2. **Skills solve configuration scattering and omission problems** -- reference by name, won't forget some parameter
-3. **Tool whitelist is important** -- reduces decision burden, increases security, controls cost
-4. **Skill design considerations**: clear boundaries, specific rules, handle edge cases, control tool count
-5. **Skills aren't magic** -- they make good LLMs better, but can't make bad LLMs good
+1. **Skills System = System Prompt + Tool Whitelist + Parameter Constraints** -- packaging role configuration into reusable units
+
+2. **Shannon uses Presets** -- Python dictionaries, stored in `roles/presets.py`, deeply integrated with the framework
+
+3. **Agent Skills uses Progressive Disclosure to solve context bloat** -- only loads metadata at startup (30-50 tokens/skill), content loads on demand
+
+4. **Agent Skills format is simple** -- directory + SKILL.md + optional support files
+
+5. **Skills and MCP complement each other** -- MCP provides API connections, Skills provide workflow instructions
 
 ---
 
@@ -517,38 +789,46 @@ This section helps you map the concepts from this chapter to Shannon source code
 
 ## Exercises
 
-### Exercise 1: Analyze Existing Skills
+### Exercise 1: Analyze Existing Presets
 
 Read Shannon's `presets.py`, answer:
 
 1. What's the difference between `research` and `analysis` roles?
 2. Why is the `writer` role's temperature higher than `analysis`?
-3. Why does the `critic` role's `max_tokens` only have 800?
+3. Why is the `generalist` role's `allowed_tools` an empty list?
 
-### Exercise 2: Design a Skill
+### Exercise 2: Design a Preset
 
-Design a Skill for "code review" task:
+Design a Preset for "code review" task:
 
 1. Write the System Prompt (at least include: responsibility, review standards, output format)
 2. List needed tools (file_read? git_diff? others?)
 3. Set temperature and max_tokens (and explain why)
 
-### Exercise 3 (Advanced): Test a Skill
+### Exercise 3: Create an Agent Skill
 
-Write 3 test cases for your designed code review Skill:
+Create a custom Skill in `~/.claude/skills/`:
 
-1. Test if it can find common issues (like unhandled exceptions)
-2. Test if it can give specific improvement suggestions
-3. Test if it can respond correctly when code has no issues
+1. Choose a task you do often (writing docs, generating tests, refactoring code...)
+2. Write `SKILL.md`, including frontmatter and instructions
+3. Test in Claude Code
+
+### Exercise 4 (Advanced): Compare the Two Implementations
+
+Think about: What scenarios are Shannon Presets vs Agent Skills each better suited for?
+
+- When is code-level configuration (Presets) better?
+- When is file-level configuration (Skills) better?
 
 ---
 
 ## Further Reading
 
-- [Anthropic System Prompts](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) - Claude official Prompt design guide
-- [CrewAI Agent Roles](https://docs.crewai.com/core-concepts/agents) - CrewAI's role design philosophy
-- [LangChain Prompt Templates](https://python.langchain.com/docs/modules/model_io/prompts/) - LangChain's template system
-- [Shannon Roles Source Code](https://github.com/Kocoro-lab/Shannon/tree/main/python/llm-service/llm_service/roles) - Code implementation
+- [Agent Skills Official Spec](https://agentskills.io) - Cross-platform standard definition
+- [Anthropic Engineering Blog: Equipping agents for the real world](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) - Agent Skills design philosophy
+- [Simon Willison: Claude Skills are awesome](https://simonwillison.net/2025/Oct/16/claude-skills/) - Why Skills matter
+- [Claude Code Skills Documentation](https://code.claude.com/docs/en/skills) - Usage guide
+- [Shannon Roles Source Code](https://github.com/Kocoro-lab/Shannon/tree/main/python/llm-service/llm_service/roles) - Presets code implementation
 
 ---
 

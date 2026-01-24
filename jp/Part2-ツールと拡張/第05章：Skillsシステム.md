@@ -1,12 +1,25 @@
-# 第 5 章：Skills システム
+# 第 5 章：Skills スキルシステム
 
-> **Skill は万能テンプレートじゃない。System Prompt、ツールのホワイトリスト、パラメータ制約をひとまとめにしただけ。ロール設計がダメなら、どんなにきれいにパッケージしても意味がない。**
+> **System Prompt、ツールホワイトリスト、パラメータ制約を再利用可能な設定としてパッケージする——この概念は異なるシステムで異なる実装があるが、核心の考え方は同じだ。**
 
 ---
 
-## 5.1 Skill って結局なに？
+## 用語説明
 
-前の章で、単体エージェント（Agent）のツールと推論能力について解説した。でもね、ひとつ問題が見えてきたんだ。同じエージェントでも、タスクが変わると途端に使えなくなる。
+| 本章の用語 | 対応システム | 説明 |
+|---------|---------|------|
+| **Presets** | Shannon | ロールプリセット、`roles/presets.py` で定義 |
+| **Agent Skills** | Anthropic オープン標準 | クロスプラットフォームのスキル規格、`.claude/skills/` など |
+
+本章ではまず汎用概念を説明し、その後 Shannon Presets と Agent Skills の2つの実装をそれぞれ紹介する。
+
+---
+
+# Part A：汎用概念
+
+## 5.1 スキルシステムとは？
+
+前の章で、単体エージェント（Agent）のツールと推論能力について解説した。でもひとつ問題が見えてきた。同じエージェントでも、タスクが変わると途端に使えなくなる。
 
 以前、あるクライアント向けにコードレビュー用のエージェントを作ったことがある。設定はシンプルだった。System Prompt で「潜在的なバグとセキュリティ問題を見つけろ」と指示して、ツールはファイル読み取りとコード検索だけ。結果は上々で、隠れた問題をかなり見つけてくれた。
 
@@ -16,48 +29,36 @@
 
 結局、午後いっぱいかけて「リサーチャー」ロールを一から作り直した。2つの設定、全く別物だ。
 
-**これが Skill で解決したい問題なんだよね。毎回ゼロからロールを設定し直す必要はない。あらかじめ用意したロールをワンクリックで切り替えればいい。** コードレビューには `code_reviewer` ロール、市場調査には `researcher` ロール。
+**これがスキルシステムで解決したい問題なんだ——あらかじめ用意したロール設定をワンクリックで切り替えられる。** コードレビューには `code_reviewer`、市場調査には `researcher` を使えばいい。
 
-一言でまとめると：**Skill = System Prompt + ツールホワイトリスト + パラメータ制約**
+### 一言で定義
+
+> **スキルシステム = System Prompt + ツールホワイトリスト + パラメータ制約のパッケージ**
 
 ![Skill 構造](assets/skill-structure.svg)
 
-```
-┌──────────────────────────────────────────────────┐
-│                    Skill                          │
-│                                                   │
-│  System Prompt  +  Allowed Tools  +  Caps        │
-│    (キャラ設定)     (使えるツール)    (パラメータ制限)  │
-└──────────────────────────────────────────────────┘
-```
+### なぜ必要？
 
-たとえば「リサーチャー」Skill はこんな感じ：
+1. **毎回の再設定を避ける**——タスクが変わっても Prompt を一から書き直す必要がない
+2. **漏れやミスを減らす**——名前で参照するから、パラメータを忘れることがない
+3. **チームでベストプラクティスを共有**——良い設定を再利用できる
 
-```python
-"research": {
-    "system_prompt": "You are a research assistant. Gather facts from authoritative sources...",
-    "allowed_tools": ["web_search", "web_fetch"],
-    "caps": {"max_tokens": 16000, "temperature": 0.3},
-}
-```
+### 2つの実装アプローチ
 
-「批評家」Skill ならこう：
+| アプローチ | 代表例 | 特徴 |
+|------|------|------|
+| **フレームワーク内蔵** | Shannon Presets | コードレベルの設定、Python 辞書 |
+| **クロスプラットフォーム標準** | Agent Skills | ファイルレベルの設定、Markdown + YAML |
 
-```python
-"critic": {
-    "system_prompt": "You are a critical reviewer. Point out flaws and suggest fixes.",
-    "allowed_tools": ["file_read"],
-    "caps": {"max_tokens": 800, "temperature": 0.2},
-}
-```
-
-呼び出すときは「research という Skill を使いたい」と言うだけ。設定は自動で読み込まれる。
+次にこの2つの実装をそれぞれ見ていこう。
 
 ---
 
+# Part B：Shannon Presets
+
 ## 5.2 Shannon の Presets レジストリ
 
-Shannon では Skills を「Presets」と呼んでいて、辞書に格納している：
+Shannon ではスキルシステムを Presets（プリセット）として実装していて、`roles/presets.py` に格納されている：
 
 ```python
 _PRESETS: Dict[str, Dict[str, object]] = {
@@ -119,9 +120,9 @@ def get_role_preset(name: str) -> Dict[str, object]:
 
 ---
 
-## 5.3 複雑な Skill の例：ディープリサーチエージェント
+## 5.3 複雑な Preset の例：ディープリサーチエージェント
 
-シンプルな Skill は数行の設定で済む。でも複雑な Skill にはもっと詳細な指示が必要だ。
+シンプルな Preset は数行の設定で済む。でも複雑な Preset にはもっと詳細な指示が必要だ。
 
 Shannon には `deep_research_agent` があって、System Prompt は50行以上ある：
 
@@ -164,20 +165,20 @@ Shannon には `deep_research_agent` があって、System Prompt は50行以上
 },
 ```
 
-この Skill には設計上のポイントがいくつかある：
+この Preset には設計上のポイントがいくつかある：
 
 1. **時間認識**：エージェントに年を明記させ、古い情報を避ける
 2. **段階的リサーチ**：広いところから狭めていき、ツール呼び出しごとに継続するか評価
-3. **ハードリミット**：ツール呼び出しは最大5回、Token爆発を防止
+3. **ハードリミット**：ツール呼び出しは最大5回、Token 爆発を防止
 4. **認識論的誠実さ**：不確実性を認め、対立する見解を提示
 
 特に**ツール呼び出し回数の制限**は本当に役立つ。この制限がないと、エージェントは延々と検索を続けて、コンテキストがパンパンになる。
 
 ---
 
-## 5.4 ドメイン専門家 Skill：GA4 アナリスト
+## 5.4 ドメイン専門家 Preset：GA4 アナリスト
 
-汎用 Skill は幅広いシナリオに適している。でも特定のドメインには専門の「エキスパート」が必要だ。
+汎用 Preset は幅広いシナリオに適している。でも特定のドメインには専門の「エキスパート」が必要だ。
 
 たとえば Google Analytics 4 アナリスト：
 
@@ -208,16 +209,16 @@ GA4_ANALYTICS_PRESET = {
 }
 ```
 
-ドメイン Skill には特殊な設定がある：
+ドメイン Preset には特殊な設定がある：
 
 - `provider_override`：特定のプロバイダーを強制（たとえば特定タスクで GPT の方が効果的な場合）
 - `preferred_model`：優先モデルを指定
 
-これらは汎用 Skill にはない設定だ。
+これらは汎用 Preset にはない設定だ。
 
 ### 動的ツールファクトリ
 
-ドメイン Skill にはもうひとつよくある要件がある：**設定に基づいてツールを動的に生成する**こと。
+ドメイン Preset にはもうひとつよくある要件がある：**設定に基づいてツールを動的に生成する**こと。
 
 たとえば GA4 ツールは特定のアカウントにバインドする必要がある：
 
@@ -238,15 +239,15 @@ def create_ga4_tool_functions(property_id: str, credentials_path: str):
     }
 ```
 
-こうすれば、異なるユーザーが異なる GA4 アカウントを使える。同じ Skill だけど、異なる認証情報をバインドできるわけだ。
+こうすれば、異なるユーザーが異なる GA4 アカウントを使える。同じ Preset だけど、異なる認証情報をバインドできるわけだ。
 
 ---
 
 ## 5.5 Prompt テンプレートのレンダリング
 
-同じ Skill でもシナリオに応じて異なる変数を注入したいことがある。
+同じ Preset でもシナリオに応じて異なる変数を注入したいことがある。
 
-たとえばデータ分析 Skill：
+たとえばデータ分析 Preset：
 
 ```python
 "data_analytics": {
@@ -302,7 +303,7 @@ You are a data analytics assistant...
 
 ## 5.6 実行時の動的拡張
 
-Skill が定義するのは静的な設定だ。でも実行時には動的にコンテンツが注入される：
+Preset が定義するのは静的な設定だ。でも実行時には動的にコンテンツが注入される：
 
 ```python
 # 現在日付を注入
@@ -319,13 +320,13 @@ if context.get("research_mode"):
     system_prompt += "\n\nRESEARCH MODE: Do not rely on snippets. Use web_fetch to read full content."
 ```
 
-こうして Skill の静的設定と実行時コンテキストが組み合わさって、最終的に LLM に送られる System Prompt になる。
+こうして Preset の静的設定と実行時コンテキストが組み合わさって、最終的に LLM に送られる System Prompt になる。
 
 ---
 
 ## 5.7 Vendor Adapter パターン
 
-外部システムと深く統合する必要がある Skill には、Shannon は巧みな設計を使っている：
+外部システムと深く統合する必要がある Preset には、Shannon は巧みな設計を使っている：
 
 ```
 roles/
@@ -363,9 +364,9 @@ except Exception:
 
 ---
 
-## 5.8 新しい Skill の設計
+## 5.8 新しい Preset の設計
 
-「コードレビュアー」Skill を作るとしたら、どう設計する？
+「コードレビュアー」Preset を作るとしたら、どう設計する？
 
 ```python
 "code_reviewer": {
@@ -483,29 +484,291 @@ except Exception:
 
 ---
 
-## 5.10 他のフレームワークではどうしてる？
+# Part C：Agent Skills
 
-| フレームワーク | 概念名 | 特徴 |
-|------|----------|------|
-| **CrewAI** | Agent Role | role, goal, backstory を含む |
-| **AutoGen** | Agent Config | system_message, llm_config を含む |
-| **LangGraph** | Node State | グラフノード内で設定 |
-| **Dify** | Prompt Template | ビジュアル編集 |
+## 5.10 Agent Skills：コンテキスト膨張問題の解決
 
-核心の考え方は同じ。ロール設定をパッケージして再利用しやすくする。違いは：
-- 設定の粒度（CrewAI には backstory があるが、Shannon にはない）
-- 設定方法（コード vs ビジュアル vs YAML）
-- フレームワークとの統合の深さ
+前半で Shannon の Presets を見た。ここからはもうひとつのスキルシステム、Agent Skills を見ていこう。
+
+### 問題：コンテキストウィンドウは希少資源
+
+2025年、AI プログラミングツールが爆発的に増えた。Claude Code、Cursor、GitHub Copilot、Codex CLI……開発者はすぐにある問題に気づいた：**コンテキストウィンドウが足りない**。
+
+MCP（Model Context Protocol）を例に挙げよう。MCP はエージェントを外部サービス——GitHub、Jira、データベース——に接続できる。素晴らしく聞こえるが、代償がある：
+
+| MCP サーバー | ツール数 | Token 消費 |
+|-----------|---------|-----------|
+| GitHub 公式 | 93 ツール | ~55,000 tokens |
+| Task Master | 59 ツール | ~45,000 tokens |
+
+ある Claude Code ユーザーが報告した：いくつかの MCP を有効にしたら、コンテキスト使用量が 178k/200k（89%）に達した。そのうち MCP ツール定義だけで 63.7k を占めていた。まだ何も始めてないのに、コンテキストがほぼ一杯だ。
+
+問題の根本は：**MCP は起動時にすべてのツール定義を読み込む**ということ。使うかどうかに関係なく、93 個の GitHub ツールのスキーマがすべてコンテキストに詰め込まれる。
+
+### Skills の解決策：段階的開示
+
+2025年10月、Anthropic は Claude Code に Skills を導入した。核心の設計思想は：**全量読み込みではなく、必要に応じて読み込む**。
+
+公式はこれを「段階的開示」（Progressive Disclosure）と呼んでいて、整理された本に例えている：
+
+> 「まず目次、次に具体的な章、最後に詳細な付録。」
+
+技術的には3層に分かれている：
+
+1. **メタデータ層**：起動時は `name` と `description` だけを読み込む。各 Skill 約 30-50 tokens
+2. **コンテンツ層**：ユーザーリクエストがマッチしたときだけ、完全な `SKILL.md` を読み込む。通常 < 5k tokens
+3. **拡張層**：参照される `reference.md`、`examples/`、`scripts/` は実際に必要なときだけ読み込む
+
+効果は？**何百もの Skills をインストールできるが、起動時には数千 tokens しか消費しない**。公式ドキュメントの表現では："the amount of context that can be bundled into a skill is effectively unbounded"（スキルにバンドルできるコンテキスト量は実質的に無制限）。
+
+### MCP との関係
+
+Skills は MCP を置き換えるものではなく、補完するものだ：
+
+- **MCP は「パイプ」**——外部サービスに接続する API
+- **Skills は「マニュアル」**——エージェントにこれらの API を使ってタスクを完了する方法を教える
+
+例を挙げよう：MCP で Jira に接続したが、エージェントは「スプリントを作成」するにはどのエンドポイントを呼び出すか、どんなパラメータを渡すか知らない。このとき「Jira プロジェクト管理」Skill が必要で、完全なワークフローを教える。
+
+そして Skills 自体の Token 効率も、MCP がもたらすコンテキスト圧迫を緩和する——MCP 接続は大量の tokens を占有するが、Skill の指示は必要なときだけ読み込まれる。
+
+### タイムライン
+
+| 時期 | イベント |
+|------|------|
+| 2025年2月 | Claude Code リリース |
+| 2025年10月 | Claude Code に Skills 機能導入；Simon Willison の記事が注目を集める |
+| 2025年12月 | OpenAI Codex CLI が Skills サポートを追加；Anthropic がオープン標準を発表 |
+| 2026年1月 | Google Antigravity、Cursor などが追随 |
+
+---
+
+## 5.11 Agent Skills フォーマット仕様
+
+### ディレクトリ構造
+
+Skill はディレクトリで、`SKILL.md` がエントリーポイント：
+
+```
+my-skill/
+├── SKILL.md           # メイン指示（必須）
+├── template.md        # テンプレートファイル（オプション）
+├── reference.md       # 詳細参考ドキュメント（オプション）
+├── examples/
+│   └── sample.md      # サンプル出力（オプション）
+└── scripts/
+    └── helper.py      # 実行可能スクリプト（オプション）
+```
+
+`SKILL.md` は必須で、その他のファイルは必要に応じて追加する。
+
+### SKILL.md フォーマット
+
+```yaml
+---
+name: my-skill
+description: このスキルが何をするか、いつ使うか
+allowed-tools: Read, Grep, Glob
+---
+
+## あなたの指示
+
+このタスクを実行するとき：
+1. 第一ステップ...
+2. 第二ステップ...
+```
+
+### Frontmatter フィールド
+
+| フィールド | 必須 | 説明 |
+|------|------|------|
+| `name` | いいえ | スキル名、デフォルトはディレクトリ名。小文字、数字、ハイフン |
+| `description` | 推奨 | Claude がいつ自動読み込みするか判断するために使用 |
+| `allowed-tools` | いいえ | ツールホワイトリスト、スキルが使えるツールを制限 |
+| `disable-model-invocation` | いいえ | `true` に設定すると Claude の自動呼び出しを禁止 |
+| `user-invocable` | いいえ | `false` に設定すると `/` メニューから非表示 |
+| `context` | いいえ | `fork` に設定するとサブエージェントで実行 |
+| `agent` | いいえ | サブエージェントタイプを指定（`Explore`、`Plan` など） |
+
+### 呼び出し制御
+
+2つのフィールドが誰がスキルを呼び出せるかを制御する：
+
+- `disable-model-invocation: true`：ユーザーだけが呼び出せる（副作用のある操作、たとえばデプロイに適している）
+- `user-invocable: false`：Claude だけが呼び出せる（バックグラウンド知識に適している、ユーザーが直接トリガーする必要がない）
+
+### 高度な機能
+
+**変数置換**：
+
+```yaml
+---
+name: fix-issue
+description: GitHub issue を修正
+---
+
+GitHub issue $ARGUMENTS を修正：
+1. issue の説明を読む
+2. 修正を実装
+3. commit を作成
+```
+
+`/fix-issue 123` を実行すると、`$ARGUMENTS` は `123` に置き換えられる。
+
+**動的コンテキスト注入**：
+
+```yaml
+---
+name: pr-summary
+description: PR の変更を要約
+---
+
+## PR コンテキスト
+- PR diff: !`gh pr diff`
+- PR コメント: !`gh pr view --comments`
+
+## タスク
+この PR の変更を要約...
+```
+
+`` !`command` `` 構文はまずコマンドを実行し、出力を Skill コンテンツに注入する。
+
+**スクリプト実行**：
+
+Skills は Python や Bash スクリプトを含むことができ、Claude がそれらを実行できる：
+
+```
+my-skill/
+├── SKILL.md
+└── scripts/
+    └── analyze.py    # Claude がこのスクリプトを実行できる
+```
+
+---
+
+## 5.12 シンプルな例
+
+「コードレビュー」スキルを作成しよう。Skills ディレクトリに `code-review/SKILL.md` を新規作成：
+
+```yaml
+---
+name: code-review
+description: コードをレビューし、バグ、セキュリティ問題、保守性の問題を見つける。ユーザーが「review」「レビュー」「このコードを見て」と言ったときに使用。
+allowed-tools: Read, Grep, Glob
+---
+
+## レビュー基準
+
+1. **セキュリティ問題**（最優先）
+   - SQL インジェクション、XSS、コマンドインジェクション
+   - ハードコードされた秘密鍵
+
+2. **ロジックエラー**
+   - null ポインタ、範囲外アクセス、リソースリーク
+
+3. **保守性**
+   - コード重複、長すぎる関数、不明確な命名
+
+## 出力フォーマット
+
+各問題について：
+- **重要度**：CRITICAL / HIGH / MEDIUM / LOW
+- **場所**：file:line
+- **問題**：簡潔な説明
+- **提案**：修正方法
+
+## ルール
+
+- MEDIUM 以上の確信度の問題のみ報告
+- 最大 10 件の最重要問題を報告
+- 明示的に求められない限り、純粋なスタイル問題はスキップ
+```
+
+**テスト方法**：
+
+- 自動トリガー：「このコードをレビューして」と言うと、エージェントが自動的にマッチして読み込む
+- 手動トリガー：`/code-review src/auth/` と入力
+
+---
+
+## 5.13 公式リソースとエコシステム
+
+### 公式リソース
+
+| リソース | リンク | 説明 |
+|------|------|------|
+| Agent Skills 仕様 | [agentskills.io](https://agentskills.io) | 公式標準定義と SDK |
+| Anthropic Skills リポジトリ | [github.com/anthropics/skills](https://github.com/anthropics/skills) | 公式サンプル集 |
+| Claude Code ドキュメント | [code.claude.com/docs/en/skills](https://code.claude.com/docs/en/skills) | 使用ガイド |
+| Skills Directory | [claude.com/connectors](https://claude.com/connectors) | パートナー Skills ディレクトリ |
+
+### Skills Directory
+
+2025年12月、Anthropic は Skills Directory も同時にリリースした——ユーザーがパートナーが構築した Skills を閲覧・有効化できるスキル配布プラットフォームだ。
+
+最初のパートナーには以下が含まれる：
+
+| パートナー | 提供する Skills |
+|---------|--------------|
+| **Atlassian** | Jira と Confluence 統合——要件ドキュメントをタスクに変換、ステータスレポート生成、社内ナレッジベース検索 |
+| **Figma** | デザイン理解——Claude が Figma デザインのコンテキスト、詳細、意図を理解し、正確にコードに変換 |
+| **Notion** | ドキュメントとデータベース操作 |
+| **Canva** | デザインリソース生成 |
+| **Stripe** | 決済統合ワークフロー |
+| **Zapier** | 自動化接続 |
+| **Vercel** | デプロイワークフロー |
+| **Cloudflare** | エッジコンピューティング設定 |
+
+これらの Skills は対応する MCP コネクターと併用できる——MCP が API 接続を提供し、Skill がワークフロー知識を提供する。
+
+---
+
+## 本章を超えて：Tools、MCP、Skills の統一的視点
+
+Skills の説明を終えて、一歩引いて Part 2 全体の概念がどう関連しているか見てみよう。
+
+**本質**：Tools、MCP、Skills はすべてエージェントのコンテキストに情報を注入し、エージェントの能力を補完するものだ。
+
+| メカニズム | 何を注入するか | 何の能力を補完するか |
+|------|---------|-------------|
+| Tools | 関数定義 + 実行ロジック | 外部システムとのインタラクション |
+| MCP | ツール定義（外部サービスから） | 外部サービスへの接続 |
+| Skills | 指示 + ワークフロー知識 | ドメイン専門知識 |
+
+三者の関係：
+
+```
+Tools ← 基本能力ユニット
+  ↑
+MCP ← 外部サービスが Tools を公開する標準的な方法
+  ↑
+Skills ← エージェントに Tools を組み合わせてタスクを完了する方法を教える
+```
+
+**設計上の共通制約**：コンテキストウィンドウは希少資源。
+
+だからどう変化しても、設計では以下が必要：
+
+- **必要に応じて読み込む**——使わないものは入れない
+- **Token 消費を最小化**——メタデータ先行、コンテンツ遅延
+- **組み合わせ可能**——小さなモジュールを組み合わせて大きな能力に
+- **最小権限**——タスク完了に必要なツールだけを与える
+
+この4つの原則が Part 2 のすべての章を貫いている。
 
 ---
 
 ## 本章のまとめ
 
-1. **Skill = System Prompt + ツールホワイトリスト + パラメータ制約** - ロール設定を再利用可能な単位にパッケージ
-2. **Skill は設定の分散と漏れの問題を解決** - 名前で参照するから、パラメータを忘れることがない
-3. **ツールホワイトリストは重要** - 判断の負担を減らし、セキュリティを高め、コストを制御
-4. **Skill 設計で気をつけること**：境界を明確に、ルールを具体的に、エッジケースを処理、ツール数を制御
-5. **Skill は万能じゃない** - 良い LLM をもっと良くするが、ダメな LLM を良くはできない
+1. **スキルシステム = System Prompt + ツールホワイトリスト + パラメータ制約**——ロール設定を再利用可能な単位にパッケージ
+
+2. **Shannon は Presets で実装**——Python 辞書、`roles/presets.py` に格納、フレームワークと深く統合
+
+3. **Agent Skills は段階的開示でコンテキスト膨張を解決**——起動時はメタデータのみ読み込む（30-50 tokens/skill）、コンテンツは必要に応じて読み込む
+
+4. **Agent Skills のフォーマットはシンプル**——ディレクトリ + SKILL.md + オプションのサポートファイル
+
+5. **Skills と MCP は補完関係**——MCP が API 接続を提供、Skills がワークフロー指示を提供
 
 ---
 
@@ -526,52 +789,60 @@ except Exception:
 
 ## 演習
 
-### 演習 1：既存の Skill を分析する
+### 演習 1：既存の Preset を分析する
 
 Shannon の `presets.py` を読んで、以下に答えよ：
 
 1. `research` と `analysis` の2つのロールはどう違う？
 2. なぜ `writer` ロールの temperature は `analysis` より高い？
-3. `critic` ロールの `max_tokens` はなぜ 800 だけ？
+3. `generalist` ロールの `allowed_tools` はなぜ空のリスト？
 
-### 演習 2：Skill を設計する
+### 演習 2：Preset を設計する
 
-「コードレビュー」タスク用の Skill を設計せよ：
+「コードレビュー」タスク用の Preset を設計せよ：
 
 1. System Prompt を書く（少なくとも：職責、レビュー基準、出力形式を含む）
 2. 必要なツールをリストアップ（file_read？git_diff？その他？）
 3. temperature と max_tokens を設定（理由も説明）
 
-### 演習 3（発展）：Skill をテストする
+### 演習 3：Agent Skill を作成する
 
-設計したコードレビュー Skill のテストケースを3つ書け：
+`~/.claude/skills/` にカスタム Skill を作成：
 
-1. よくある問題（未処理の例外など）を発見できるかテスト
-2. 具体的な改善提案ができるかテスト
-3. コードに問題がない場合に正しく応答できるかテスト
+1. よく行うタスクを選ぶ（ドキュメント作成、テスト生成、コードリファクタリング...）
+2. `SKILL.md` を書く、frontmatter と指示を含める
+3. Claude Code でテスト
+
+### 演習 4（発展）：2つの実装を比較する
+
+考えてみよう：Shannon Presets と Agent Skills はそれぞれどんなシナリオに適している？
+
+- どんなときにコードレベルの設定（Presets）の方が良い？
+- どんなときにファイルレベルの設定（Skills）の方が良い？
 
 ---
 
 ## 参考資料
 
-- [Anthropic System Prompts](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) - Claude 公式 Prompt 設計ガイド
-- [CrewAI Agent Roles](https://docs.crewai.com/core-concepts/agents) - CrewAI のロール設計思想
-- [LangChain Prompt Templates](https://python.langchain.com/docs/modules/model_io/prompts/) - LangChain のテンプレートシステム
-- [Shannon Roles Source Code](https://github.com/Kocoro-lab/Shannon/tree/main/python/llm-service/llm_service/roles) - コード実装
+- [Agent Skills 公式仕様](https://agentskills.io) - クロスプラットフォーム標準定義
+- [Anthropic エンジニアリングブログ：Equipping agents for the real world](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) - Agent Skills 設計思想
+- [Simon Willison: Claude Skills are awesome](https://simonwillison.net/2025/Oct/16/claude-skills/) - Skills がなぜ重要か
+- [Claude Code Skills ドキュメント](https://code.claude.com/docs/en/skills) - 使用ガイド
+- [Shannon Roles Source Code](https://github.com/Kocoro-lab/Shannon/tree/main/python/llm-service/llm_service/roles) - Presets コード実装
 
 ---
 
 ## 次章の予告
 
-Skill は「エージェントがどう振る舞うべきか」という問題を解決した。でもまだ別の問題がある。
+スキルシステムは「エージェントがどう振る舞うべきか」という問題を解決した。でもまだ別の問題がある。
 
 エージェントがタスクを実行しているとき、何をしているか知りたいよね。重要なポイントでカスタムロジックを挿入したいこともある。
 
 たとえば：
 - ツール呼び出しごとにログを記録
 - Token 消費が閾値を超えたら警告を出す
-- 特定の操作の前にユーザーの確認（承認）を求める
+- 特定の操作の前にユーザーの確認を求める
 
-これが次章の内容 - **Hooks とイベントシステム**だ。
+これが次章の内容——**Hooks とイベントシステム**だ。
 
 次の章で続けよう。
