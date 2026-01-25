@@ -756,6 +756,23 @@ So regardless of changes, design must:
 
 These four principles run through all chapters in Part 2.
 
+### Understanding the Essence to Leverage the Ecosystem
+
+The Skills ecosystem is indeed growing rapidly. Cross-platform standards, dozens of supported tools, partner directories, even a skill-creator skill to help you write skills -- the barrier to entry keeps getting lower.
+
+But a thriving ecosystem doesn't mean you can use it out of the box.
+
+Back to the essence: **Skills are just structured context injection**. It lowers the cost of "teaching an Agent how to do things," but what to teach and how to teach it -- that's still on you.
+
+Generic Skills from the market can serve as a starting point, but what truly generates value is often:
+- Your company's internal processes and best practices
+- Your clients' specific scenarios and needs
+- Domain know-how accumulated by your team
+
+The reason Atlassian, Figma, and Stripe on the Skills Directory are valuable isn't because of the SKILL.md format -- it's because they've encoded years of product experience and domain knowledge into them.
+
+**Recommendation**: Use Skills from the ecosystem to learn the format and approach, but build and accumulate your core, differentiated Skills yourself.
+
 ---
 
 ## Chapter Summary
