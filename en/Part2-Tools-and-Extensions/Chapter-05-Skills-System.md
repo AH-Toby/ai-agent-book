@@ -723,6 +723,51 @@ These Skills can work with corresponding MCP connectors -- MCP provides API conn
 
 ---
 
+## 5.14 Agent Skills in Multi-Agent Orchestration Design
+
+Shannon also supports Agent Skills. The Agent Skills standard discussed earlier primarily targets single-Agent scenarios -- one Agent loads one Skill and executes it step by step. But in Multi-Agent systems, the question changes: **How does the Orchestrator know whether a task should be handled by a single Agent following a Skill, or split across multiple Agents for collaboration?**
+
+Shannon's design answer is simple: **Let the Skill declare it.**
+
+### Skills Determine Orchestration Paths
+
+Shannon adds a key field on top of the Anthropic standard: `requires_role`. This field doesn't just specify a role -- it directly affects the Orchestrator's routing decision:
+
+- **Skill declares `requires_role`** → Orchestrator skips LLM task decomposition and creates a single-Agent execution plan. Because the Skill itself already defines a complete workflow, splitting it would cause conflicts.
+
+- **Skill doesn't declare a role** → Orchestrator calls LLM for normal task decomposition, splitting into subtasks for parallel DAG execution.
+
+In other words, **`requires_role` is the fork point between Skills and Multi-Agent orchestration**. The Skill author decides the execution mode at design time.
+
+Why this design? Because different tasks have fundamentally different collaboration patterns.
+
+Code review, debugging, TDD -- these tasks naturally need one expert to handle from start to finish. Splitting them across multiple Agents would lose context. Meanwhile, tasks like "research the latest developments in field X" naturally need multiple Agents searching in parallel and synthesizing results.
+
+**The Skill author best understands the task characteristics, so let the Skill decide the execution mode.**
+
+This also reveals the relationship between Presets and Skills -- **Presets manage capabilities, Skills manage workflows**. A Skill references a Preset through `requires_role`. For example, the `code-review` Skill specifies `requires_role: critic`, so the Agent only gets read-only access at execution time (`critic` Preset only allows `file_read`). The Skill's Markdown body defines the specific three-phase workflow: gather context → analyze (security/quality/performance) → output report.
+
+The benefit of this separation is **free composition**: the same `critic` Preset can be paired with different Skills like `code-review`, `architecture-review`, or `dependency-audit`. The capability boundary stays the same, while the workflow switches with the task.
+
+### Security Design: Three Layers Stacked
+
+In Multi-Agent systems, security boundaries matter more than in single-Agent setups -- one runaway Agent could affect the entire orchestration chain. Shannon stacks three layers of protection at the Skill level:
+
+1. **Who can use it**: Skills with `dangerous: true` require admin/owner permissions or a dedicated `skills:dangerous` authorization scope
+2. **What tools can be used**: The Preset referenced by `requires_role` restricts the tool whitelist
+3. **How many Tokens to spend**: `budget_max` limits Token consumption per execution
+
+Three layers of independent control, no interdependency. A Skill can be non-dangerous but have strict tool restrictions (`critic`), or be dangerous but with broad tool permissions (e.g., production deployment).
+
+### Skills' Role in Inter-Agent Negotiation
+
+Multi-Agent collaboration requires Agents to hand off tasks to each other. Shannon's P2P message protocol includes a `Skills` field -- the sender can declare "completing this task requires the `code-review` skill," and the receiver uses this to determine whether it can take on the task.
+
+This means Skills don't just guide how a single Agent works -- they also help the system decide **who does the work**. We'll expand on this topic in Part 5 (Multi-Agent Orchestration) when discussing the Handoff mechanism.
+
+
+---
+
 ## Beyond This Chapter: A Unified View of Tools, MCP, and Skills
 
 Having covered Skills, we can step back and see how the concepts in Part 2 relate to each other.
@@ -797,8 +842,10 @@ This section helps you map the concepts from this chapter to Shannon source code
 
 - [`roles/presets.py`](https://github.com/Kocoro-lab/Shannon/blob/main/python/llm-service/llm_service/roles/presets.py): Look at the `_PRESETS` dictionary, understand the structure of role presets. Focus on `deep_research_agent` as a complex example
 
-### Optional Deep Dives (2, pick by interest)
+### Optional Deep Dives (pick by interest)
 
+- [`config/skills/core/code-review.md`](https://github.com/Kocoro-lab/Shannon/blob/main/config/skills/core/code-review.md): See a complete built-in Skill, note the combination of `requires_role: critic` and `budget_max: 5000`
+- [`go/orchestrator/internal/skills/`](https://github.com/Kocoro-lab/Shannon/tree/main/go/orchestrator/internal/skills): Skills registry Go implementation, focus on `models.go` (Skill struct) and `registry.go` (loading logic)
 - [`roles/ga4/analytics_agent.py`](https://github.com/Kocoro-lab/Shannon/blob/main/python/llm-service/llm_service/roles/ga4/analytics_agent.py): See a real vendor-customized role
 - Compare `research` and `analysis` presets, think about why the tool lists are different
 

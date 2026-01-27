@@ -723,6 +723,51 @@ allowed-tools: Read, Grep, Glob
 
 ---
 
+## 5.14 Agent Skills の Multi-Agent オーケストレーション設計
+
+Shannon も Agent Skills をサポートしている。前述の Agent Skills 標準は主にシングル Agent シナリオ向けだ——1つの Agent が1つの Skill を読み込み、ステップに沿って実行する。でも Multi-Agent システムでは問題が変わる：**Orchestrator はタスクをシングル Agent に Skill に従って実行させるべきか、それとも複数の Agent に分割して協力させるべきか、どう判断するのか？**
+
+Shannon の設計上の答えはシンプルだ：**Skill 自身に宣言させる。**
+
+### Skill がオーケストレーション経路を決定する
+
+Shannon は Anthropic 標準の上にキーフィールドを追加した：`requires_role`。このフィールドは単にロールを指定するだけでなく、Orchestrator のルーティング判断に直接影響する：
+
+- **Skill が `requires_role` を宣言している** → Orchestrator は LLM タスク分解をスキップし、シングル Agent 実行プランを作成する。Skill 自体が完全なワークフローステップを定義しているため、分割するとかえって矛盾が生じる。
+
+- **Skill が role を宣言していない** → Orchestrator は通常通り LLM でタスク分解を行い、サブタスクに分割して DAG 並列実行する。
+
+つまり、**`requires_role` は Skills と Multi-Agent オーケストレーションの分岐点**だ。Skill の作者が設計時にタスクの実行モードを決定する。
+
+なぜこの設計なのか？タスクごとに協力パターンが根本的に異なるからだ。
+
+コードレビュー、デバッグ、TDD——これらのタスクは本質的に一人の専門家が最初から最後まで担当する必要がある。複数の Agent に分割するとコンテキストが失われる。一方、「X 分野の最新動向を調査する」のようなタスクは、複数の Agent が並列で検索・集約するのが自然だ。
+
+**Skill の作者がタスクの特性を最もよく理解している。だから Skill 自身に実行モードを決定させる。**
+
+これは Presets と Skills の関係も明らかにする——**Presets は能力を管理し、Skills はワークフローを管理する**。Skill は `requires_role` を通じて Preset を参照する。たとえば `code-review` Skill は `requires_role: critic` を指定し、実行時に Agent は読み取り専用アクセスのみ（`critic` Preset は `file_read` のみ許可）。Skill の Markdown 本文は具体的な3段階ワークフローを定義する：コンテキスト収集 → 分析（セキュリティ/品質/パフォーマンス）→ レポート出力。
+
+この分離のメリットは**自由に組み合わせられること**：同じ `critic` Preset に `code-review`、`architecture-review`、`dependency-audit` など異なる Skill を組み合わせられる。能力の境界は変わらず、ワークフローがタスクに応じて切り替わる。
+
+### セキュリティ設計：3層の重ね合わせ
+
+Multi-Agent システムでは、セキュリティ境界はシングル Agent よりも重要だ——暴走した1つの Agent がオーケストレーションチェーン全体に影響しかねない。Shannon は Skill レベルで3層の防御を重ねている：
+
+1. **誰が使えるか**：`dangerous: true` の Skill は admin/owner 権限または専用の `skills:dangerous` 認可スコープが必要
+2. **どのツールが使えるか**：`requires_role` が参照する Preset がツールホワイトリストを制限
+3. **Token をどれだけ使うか**：`budget_max` が1回の実行あたりの Token 消費上限を制限
+
+3層が独立して制御され、相互依存しない。ある Skill は non-dangerous でもツール制限が厳しい（`critic`）こともあれば、dangerous でもツール権限が広い（例：本番環境デプロイ）こともある。
+
+### Agent 間ネゴシエーションにおける Skills の役割
+
+Multi-Agent 協調では、Agent 間でタスクを受け渡す必要がある。Shannon の P2P メッセージプロトコルには `Skills` フィールドがある——送信側が「このタスクを完了するには `code-review` スキルが必要」と宣言でき、受信側はこれに基づいて自分が引き受けられるか判断する。
+
+これは Skills が単一の Agent のやり方をガイドするだけでなく、システムが**誰がやるか**を決定する助けにもなることを意味する。Part 5（Multi-Agent オーケストレーション）の Handoff メカニズムでこのトピックをさらに展開する。
+
+
+---
+
 ## 本章を超えて：Tools、MCP、Skills の統一的視点
 
 Skills の説明を終えて、一歩引いて Part 2 全体の概念がどう関連しているか見てみよう。
@@ -797,8 +842,10 @@ Skills Directory の Atlassian、Figma、Stripe が価値あるのは、SKILL.md
 
 - [`roles/presets.py`](https://github.com/Kocoro-lab/Shannon/blob/main/python/llm-service/llm_service/roles/presets.py)：`_PRESETS` 辞書を見て、ロールプリセットの構造を理解する。`deep_research_agent` という複雑な例に注目
 
-### 選読（興味に応じて2つ選択）
+### 選読（興味に応じて選択）
 
+- [`config/skills/core/code-review.md`](https://github.com/Kocoro-lab/Shannon/blob/main/config/skills/core/code-review.md)：完全な内蔵 Skill を見る、`requires_role: critic` と `budget_max: 5000` の組み合わせに注目
+- [`go/orchestrator/internal/skills/`](https://github.com/Kocoro-lab/Shannon/tree/main/go/orchestrator/internal/skills)：Skills レジストリの Go 実装、`models.go`（Skill 構造体）と `registry.go`（読み込みロジック）に注目
 - [`roles/ga4/analytics_agent.py`](https://github.com/Kocoro-lab/Shannon/blob/main/python/llm-service/llm_service/roles/ga4/analytics_agent.py)：実際のベンダーカスタムロールを見る
 - `research` と `analysis` の2つのプリセットを比較して、なぜツールリストが異なるか考える
 
