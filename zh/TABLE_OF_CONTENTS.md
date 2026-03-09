@@ -5,7 +5,7 @@
 
 > **2025-2026 热点话题快速导航**
 >
-> - **Human-in-the-Loop**：第 15 章 (15.12) — 人机协作、升级触发、中断接管、信任升级
+> - **Human-in-the-Loop**：第 15 章 (15.8) — Swarm 中的人机协作、human_input 事件、实时响应
 > - **MCP 协议**：第 4 章 — Model Context Protocol 工具标准化
 > - **Deep Research**：第 27 章 — 系统化深度调研、多 Agent 协作
 > - **Computer Use**：第 28 章 — 浏览器/桌面自动化
@@ -69,7 +69,7 @@
 |------|------|----------|
 | 第 13 章 | [编排基础](./Part5-多Agent编排/第13章：编排基础.md) | 编排 vs 协作、通信模式、任务分配 |
 | 第 14 章 | [DAG 工作流](./Part5-多Agent编排/第14章：DAG工作流.md) | 有向无环图、并行执行、依赖管理 |
-| 第 15 章 | [Supervisor 模式](./Part5-多Agent编排/第15章：Supervisor模式.md) | 监督者架构、任务路由、**Human-in-the-Loop**、升级触发、中断接管 |
+| 第 15 章 | [Swarm 模式](./Part5-多Agent编排/第15章：Swarm模式.md) | Lead Agent 事件循环、动态 Worker、Workspace 协作、**Human-in-the-Loop** |
 | 第 16 章 | [Handoff 机制](./Part5-多Agent编排/第16章：Handoff机制.md) | Agent 间任务交接、状态传递、上下文保持 |
 
 ---
@@ -170,6 +170,6 @@ Part 7 + Part 8
 
 ### 前沿热点（1-2 天）
 ```
-第 4 章(MCP) → 第 15 章 15.12(HITL) → 第 27 章(Deep Research) → 第 28 章(Computer Use) → 第 29 章(Agentic Coding)
+第 4 章(MCP) → 第 15 章 15.8(HITL) → 第 27 章(Deep Research) → 第 28 章(Computer Use) → 第 29 章(Agentic Coding)
 ```
 目标：了解 2025-2026 年最热门的 Agent 话题（MCP、Human-in-the-Loop、Deep Research、Computer Use、Agentic Coding）

@@ -525,13 +525,13 @@
 
 **Related Terms**: [Context Window](#context-window), [Memory](#memory)
 
-### Supervisor Pattern
+### Swarm Pattern
 
-**Definition**: A multi-Agent architecture pattern where one Agent acts as coordinator, assigning tasks to specialist Agents and aggregating results.
+**Definition**: A multi-Agent architecture pattern where a Lead Agent dynamically spawns and coordinates Worker Agents through an event-driven loop, managing task assignment, quality verification, and convergence detection.
 
 **Related Chapters**: Chapter 15
 
-**Example**: Supervisor Agent breaks down "write article" into research, writing, and proofreading tasks, assigns to three specialists
+**Example**: Lead Agent decomposes a research task, spawns researcher/analyst/writer Agents, monitors progress via event loop, and synthesizes results
 
 **Related Terms**: [Orchestrator](#orchestrator), [Handoff](#handoff)
 
@@ -663,7 +663,7 @@ If you find inaccurate definitions or need to add new terms, please provide feed
 **By Topic**:
 - **Agent Basics**: Agent, ReAct, Tool Use, Function Calling, Prompt
 - **Reasoning Patterns**: CoT, ToT, Planning, Reflection, Debate
-- **Multi-Agent**: Multi-Agent, Orchestrator, DAG, Supervisor, Handoff, P2P
+- **Multi-Agent**: Multi-Agent, Orchestrator, DAG, Swarm, Handoff, P2P
 - **Extension Mechanisms**: MCP, Skills, Hooks, Plugins
 - **Context Memory**: Context Window, Memory, Session, Summarization, RAG
 - **Production Architecture**: Temporal, Observability, Logging, Tracing, Metrics

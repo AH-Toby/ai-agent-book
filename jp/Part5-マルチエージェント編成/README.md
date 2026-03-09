@@ -8,7 +8,7 @@
 |------|------|----------|
 | 13 | 編成の基礎 | 複数のエージェントが協力して働くにはどうするか |
 | 14 | DAGワークフロー | タスクの依存関係をどう処理するか |
-| 15 | Supervisorパターン | 動的なエージェントチームをどう管理するか |
+| 15 | Swarmパターン | 動的なエージェントチームをどう管理するか |
 | 16 | Handoffメカニズム | エージェント間でタスクと状態をどう受け渡すか |
 
 ## 学習目標
@@ -16,7 +16,7 @@
 本Partを完了後、以下ができるようになります：
 - Orchestrator編成アーキテクチャを設計する
 - DAG (有向無環グラフ) ワークフローを実装する
-- Supervisorパターンを使って動的なエージェントを管理する
+- Swarmパターンを使って動的なエージェントを管理する
 - エージェント間のHandoffと状態の受け渡しを処理する
 
 ## Shannonコード案内
@@ -26,7 +26,7 @@ Shannon/
 ├── go/orchestrator/internal/workflows/
 │   ├── orchestrator_router.go          # ルーティング判定
 │   ├── dag_workflow.go                 # DAG実装
-│   └── supervisor_workflow.go          # Supervisorパターン
+│   └── swarm_workflow.go               # Swarmパターン
 └── docs/multi-agent-workflow-architecture.md
 ```
 
@@ -38,7 +38,7 @@ Orchestrator Router
     ├── DAG (通常のマルチステップタスク)
     ├── React (ツール集約型)
     ├── Research (情報合成)
-    └── Supervisor (> 5個のサブタスク)
+    └── Swarm (force_swarm / 複雑な協調)
 ```
 
 ## 前提知識

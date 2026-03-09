@@ -68,7 +68,7 @@
 |---------|-------|--------------|
 | Chapter 13 | [Orchestration Fundamentals](./Part5-Multi-Agent-Orchestration/Chapter-13-Orchestration-Fundamentals.md) | Orchestration vs collaboration, communication patterns, task allocation |
 | Chapter 14 | [DAG Workflows](./Part5-Multi-Agent-Orchestration/Chapter-14-DAG-Workflows.md) | Directed acyclic graphs, parallel execution, dependency management |
-| Chapter 15 | [Supervisor Pattern](./Part5-Multi-Agent-Orchestration/Chapter-15-Supervisor-Pattern.md) | Supervisor architecture, task routing, **Human-in-the-Loop**, escalation triggers, interrupt takeover |
+| Chapter 15 | [Swarm Pattern](./Part5-Multi-Agent-Orchestration/Chapter-15-Swarm-Pattern.md) | Swarm architecture, Lead Agent event loop, **Human-in-the-Loop**, convergence detection, dynamic teams |
 | Chapter 16 | [Handoff Mechanism](./Part5-Multi-Agent-Orchestration/Chapter-16-Handoff-Mechanism.md) | Inter-Agent task handoff, state transfer, context preservation |
 
 ---

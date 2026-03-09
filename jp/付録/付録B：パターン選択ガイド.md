@@ -285,7 +285,7 @@ VotingEnabled:    true  // 投票でフォールバック
           │
           └─ 完全に計画できない → 動的な調整が必要？
                                  │
-                                 ├─ 必要 → Supervisor（第15章）
+                                 ├─ 必要 → Swarm（第15章）
                                  │
                                  └─ 不要 → タスク間で引き継ぎが必要？
                                            │
@@ -301,7 +301,7 @@ VotingEnabled:    true  // 投票でフォールバック
 | **Parallel** | 低 | 低 | 独立したサブタスクの並列実行 | タスク間に依存あり | 第14章 |
 | **Sequential** | 低 | 中 | 厳密な順序依存 | タスクが並列実行可能 | 第14章 |
 | **DAG** | 中 | 中 | 部分的並列 + 依存関係 | 依存関係が不確定 | 第14章 |
-| **Supervisor** | 高 | 高 | 動的なタスク割り当て | 事前に計画可能 | 第15章 |
+| **Swarm** | 高 | 高 | 動的なタスク割り当て | 事前に計画可能 | 第15章 |
 | **Handoff** | 低 | 中 | 専門分化した分業 | 専門分化が不要 | 第16章 |
 
 ### Parallel 実行を使うべきとき
@@ -363,7 +363,7 @@ VotingEnabled:    true  // 投票でフォールバック
 **不適切な場面**：
 - すべてのタスクが独立（Parallel を使う）
 - すべてのタスクがシリアル（Sequential を使う）
-- 依存関係が確定できない（Supervisor を使う）
+- 依存関係が確定できない（Swarm を使う）
 - タスク数が少ない（3 個未満）
 
 **コストの目安**：
@@ -382,10 +382,10 @@ PassDependencyResults:  true   // 依存結果を受け渡す
 ```
 ○ 「テスラの財務分析：財務報告取得(A) + 競合情報取得(B) → 成長率計算(C、Aに依存) + 利益率計算(D、Aに依存) → 比較分析(E、A,B,C,Dに依存)」
 × 「3 社を検索」（依存なし、Parallel を使う）
-× 「次のステップを動的に決定」（事前計画できない、Supervisor を使う）
+× 「次のステップを動的に決定」（事前計画できない、Swarm を使う）
 ```
 
-### Supervisor パターンを使うべきとき
+### Swarm パターンを使うべきとき
 
 **適用場面**：
 - タスクの数や種類が不確定
@@ -400,7 +400,7 @@ PassDependencyResults:  true   // 依存結果を受け渡す
 
 **コストの目安**：
 - スケジューリングオーバーヘッド: +20-30% token
-- Supervisor の判断: 各ラウンド約 1000 tokens
+- Lead Agent の判断: 各ラウンド約 1000 tokens
 - 適切な場面: 複雑で動的なシナリオ
 
 **例**：
@@ -582,7 +582,7 @@ Debate:     Base x NumDebaters x MaxRounds
 Parallel:   Base x NumTasks / MaxConcurrency（時間最適化）
 Sequential: Base x NumTasks（時間累積）
 DAG:        Base x NumTasks x 0.6-0.8（部分並列）
-Supervisor: Base x (NumAgents + SupervisorOverhead)
+Swarm:      Base x (NumAgents + LeadOverhead)
 ```
 
 ---
@@ -601,7 +601,7 @@ Supervisor: Base x (NumAgents + SupervisorOverhead)
 | **数学的推論** | CoT | 推論プロセスを示す | 第12章 |
 | **ドキュメント生成** | Planning + Reflection | 構造化 + 品質保証 | 第10、11章 |
 | **データ分析** | Planning + DAG | 分解 + 並列処理 | 第10、14章 |
-| **カスタマーサービスルーティング** | Supervisor または Handoff | 動的割り当てまたは専門分化 | 第15、16章 |
+| **カスタマーサービスルーティング** | Swarm または Handoff | 動的割り当てまたは専門分化 | 第15、16章 |
 | **ワークフロー実行** | DAG | 固定フロー + 依存関係管理 | 第14章 |
 
 ### 制約条件別選択
@@ -619,7 +619,7 @@ Supervisor: Base x (NumAgents + SupervisorOverhead)
 | チームフェーズ | 推奨スタート | 徐々に導入 | 後回し |
 |--------------|------------|----------|-------|
 | **探索期** | ReAct、CoT | Planning | ToT、Debate |
-| **成長期** | Planning、Reflection | DAG、Supervisor | - |
+| **成長期** | Planning、Reflection | DAG、Swarm | - |
 | **成熟期** | 全パターン | カスタムパターン | - |
 
 ---
@@ -677,11 +677,11 @@ Debate（3 つの視点：性能優先、コスト優先、セキュリティ優
 
 **要件**：ユーザーの質問に応じて異なるエキスパートエージェントにルーティング
 
-**初期選択**：Supervisor（動的ルーティング）
+**初期選択**：Swarm（動的ルーティング）
 
 **最適化の方向性**：
-- ルーティングルールが比較的固定 → Supervisor より Handoff を使用
-- Supervisor の判断コストを節約
+- ルーティングルールが比較的固定 → Swarm より Handoff を使用
+- Lead Agent の判断コストを節約
 
 **最終方案**：
 ```

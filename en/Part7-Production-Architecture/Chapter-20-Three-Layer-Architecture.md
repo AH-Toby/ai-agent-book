@@ -90,7 +90,7 @@ The Orchestrator is the system's "brain"—it doesn't execute specific tasks, bu
 |----------------|-------------|-------------------|
 | **Workflow Orchestration** | Durable execution based on Temporal | Automatic crash recovery |
 | **Budget Control** | Token budget, cost tracking | Auto-stop on budget exceeded |
-| **Routing Decisions** | Choose execution strategy (ReAct/DAG/Supervisor) | Based on complexity scoring |
+| **Routing Decisions** | Choose execution strategy (ReAct/DAG/Swarm) | Based on complexity scoring |
 | **Result Synthesis** | Merge multi-Agent results | LLM-assisted + rule-based synthesis |
 
 ### Entry Program Structure

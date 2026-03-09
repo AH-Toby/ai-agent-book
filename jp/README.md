@@ -23,7 +23,7 @@
 これらでは「使う」ことはできても、本番環境で動くエージェントシステムを「構築する」ことはできません。
 
 本当の本番システムには以下の疑問への答えが必要です：
-- **複数エージェントをどう連携させる？** DAG、Supervisor、それともHandoff？
+- **複数エージェントをどう連携させる？** DAG、Swarm、それともHandoff？
 - **トークン予算をどう管理する？** 1回の呼び出し単位か、ワークフロー全体か？
 - **ツール実行が失敗したらどうする？** リトライ、フォールバック、それとも人的介入？
 - **セキュリティはどう担保する？** サンドボックス隔離、権限管理、監査ログ
@@ -65,7 +65,7 @@
 | **Part 2** | ツールと拡張 | Function Calling、MCP、Skills、Hooks |
 | **Part 3** | コンテキストとメモリ | Context管理、Memoryアーキテクチャ、セッション設計 |
 | **Part 4** | 単一エージェントパターン | Planning、Reflection、Chain-of-Thought |
-| **Part 5** | マルチエージェント編成 | DAG、Supervisor、Handoff |
+| **Part 5** | マルチエージェント編成 | DAG、Swarm、Handoff |
 | **Part 6** | 高度な推論 | Tree-of-Thoughts、Debate、Research |
 | **Part 7** | 本番アーキテクチャ | 3層設計、Temporal、オブザーバビリティ |
 | **Part 8** | エンタープライズ機能 | トークン予算、OPAポリシー、WASIサンドボックス、マルチテナント |
@@ -76,7 +76,7 @@ Part1-エージェント基礎/      エージェント概念、ReActループ
 Part2-ツールと拡張/          Tools、MCP、Skills、Hooks
 Part3-コンテキストとメモリ/  Context管理、Memoryアーキテクチャ
 Part4-単一エージェントパターン/ Planning、Reflection、CoT
-Part5-マルチエージェント編成/   DAG、Supervisor、Handoff
+Part5-マルチエージェント編成/   DAG、Swarm、Handoff
 Part6-高度な推論/            ToT、Debate、Research
 Part7-本番アーキテクチャ/    3層設計、Temporal、オブザーバビリティ
 Part8-エンタープライズ機能/  予算管理、OPA、WASIサンドボックス

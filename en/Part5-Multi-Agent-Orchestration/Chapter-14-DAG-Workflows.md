@@ -10,7 +10,7 @@
 > 2. Three modes: Parallel (independent), Sequential (chained), Hybrid (complex dependencies)
 > 3. Temporal's single-threaded model requires no locks, but you must use deterministic APIs
 > 4. Dependency waiting uses incremental timeout checks, not blocking for the entire timeout
-> 5. Simple parallel tasks work fine with DAG; consider Supervisor for more than 5 subtasks
+> 5. Simple parallel tasks work fine with DAG; consider Swarm for more than 5 subtasks
 >
 > **10-minute path**: 14.1-14.2 → 14.4 → Shannon Lab
 
@@ -681,6 +681,6 @@ DAG workflows solve the scheduling problem for "known dependencies." But some sc
 - Need dynamic communication between Agents
 - Partial failures require intelligent degradation
 
-The next chapter covers **Supervisor Pattern**—when DAG isn't enough, how to handle more complex multi-Agent scenarios through dynamic team management.
+The next chapter covers **Swarm Pattern**—when DAG isn't enough, how to handle more complex multi-Agent scenarios through dynamic team management.
 
 Ready? Let's go.
