@@ -413,7 +413,7 @@ func (a *Activities) SendAgentMessage(ctx context.Context, in SendAgentMessageIn
 }
 
 // ========== 任务协商协议（进阶示例） ==========
-type TaskRequest struct {  // Supervisor 广播请求
+type TaskRequest struct {  // Lead Agent 广播请求
     TaskID, Description string
     Skills              []string  // 需要的技能
 }
@@ -421,7 +421,7 @@ type TaskOffer struct {    // Agent 响应提议
     RequestID, AgentID string
     Confidence         float64   // 完成置信度
 }
-type TaskAccept struct {   // Supervisor 确认委派
+type TaskAccept struct {   // Lead Agent 确认委派
     RequestID, AgentID string
 }
 ```
@@ -699,7 +699,7 @@ workflows:
 |------|----------|--------------|
 | Ch13 编排基础 | Orchestrator 四职责、路由决策 | orchestrator_router.go |
 | Ch14 DAG 工作流 | Parallel/Sequential/Hybrid 三种模式 | strategies/dag.go |
-| Ch15 Supervisor | 邮箱系统、动态团队、智能容错 | supervisor_workflow.go |
+| Ch15 Swarm 模式 | Lead 事件循环、动态 Agent、Workspace 协作 | swarm_workflow.go |
 | Ch16 Handoff | 数据流声明、工作空间、P2P 协调 | activities/p2p.go |
 
 这四个组件一起工作：
@@ -715,7 +715,7 @@ workflows:
     ┌────┴────┐
     ▼         ▼
 ┌───────┐  ┌──────────┐
-│  DAG  │  │Supervisor│  ← 执行引擎
+│  DAG  │  │  Swarm   │  ← 执行引擎
 └───┬───┘  └────┬─────┘
     │           │
     └─────┬─────┘

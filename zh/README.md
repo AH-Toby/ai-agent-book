@@ -23,7 +23,7 @@
 这些只能让你"用"Agent，不能让你"构建"生产级 Agent 系统。
 
 真正的生产系统需要回答：
-- **多 Agent 如何协作？** DAG、Supervisor、还是 Handoff？
+- **多 Agent 如何协作？** DAG、Swarm、还是 Handoff？
 - **Token 预算如何控制？** 单次调用还是整个 workflow？
 - **工具执行失败怎么办？** 重试、降级、还是人工介入？
 - **如何保证安全？** 沙箱隔离、权限控制、审计日志
@@ -65,7 +65,7 @@
 | **Part 2** | 工具与扩展 | Function Calling、MCP、Skills、Hooks |
 | **Part 3** | 上下文与记忆 | Context 管理、Memory 架构、会话设计 |
 | **Part 4** | 单 Agent 模式 | Planning、Reflection、Chain-of-Thought |
-| **Part 5** | 多 Agent 编排 | DAG、Supervisor、Handoff |
+| **Part 5** | 多 Agent 编排 | DAG、Swarm、Handoff |
 | **Part 6** | 高级推理 | Tree-of-Thoughts、Debate、Research |
 | **Part 7** | 生产架构 | 三层设计、Temporal、可观测性 |
 | **Part 8** | 企业级特性 | Token 预算、OPA 策略、WASI 沙箱、多租户 |
@@ -76,7 +76,7 @@ Part1-Agent基础/        Agent概念、ReAct循环
 Part2-工具与扩展/       Tools、MCP、Skills、Hooks
 Part3-上下文与记忆/     Context管理、Memory架构
 Part4-单Agent模式/      Planning、Reflection、CoT
-Part5-多Agent编排/      DAG、Supervisor、Handoff
+Part5-多Agent编排/      DAG、Swarm、Handoff
 Part6-高级推理/         ToT、Debate、Research
 Part7-生产架构/         三层架构、Temporal、可观测性
 Part8-企业级特性/       预算控制、OPA、WASI沙箱

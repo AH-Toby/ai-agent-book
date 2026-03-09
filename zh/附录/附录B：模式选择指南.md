@@ -285,7 +285,7 @@ VotingEnabled:    true  // 投票兜底
            │
            └─ 无法完全规划 → 需要动态调整吗？
                             │
-                            ├─ 需要 → Supervisor (第 15 章)
+                            ├─ 需要 → Swarm (第 15 章)
                             │
                             └─ 不需要 → 任务间需要交接吗？
                                        │
@@ -301,7 +301,7 @@ VotingEnabled:    true  // 投票兜底
 | **Parallel** | 低 | 低 | 独立子任务并行执行 | 任务间有依赖 | 第 14 章 |
 | **Sequential** | 低 | 中 | 严格顺序依赖 | 任务可并行 | 第 14 章 |
 | **DAG** | 中 | 中 | 部分并行+依赖 | 无法确定依赖 | 第 14 章 |
-| **Supervisor** | 高 | 高 | 动态任务分配 | 可提前规划 | 第 15 章 |
+| **Swarm** | 高 | 高 | 动态协作、人工反馈 | 可提前规划 | 第 15 章 |
 | **Handoff** | 低 | 中 | 专业化分工 | 无需专业化 | 第 16 章 |
 
 ### 何时使用 Parallel 执行
@@ -363,7 +363,7 @@ VotingEnabled:    true  // 投票兜底
 **不适用场景**：
 - 所有任务都独立（用 Parallel）
 - 所有任务都串行（用 Sequential）
-- 依赖关系无法确定（用 Supervisor）
+- 依赖关系无法确定（用 Swarm）
 - 任务数量太少 (<3 个)
 
 **成本考量**：
@@ -382,16 +382,16 @@ PassDependencyResults:  true   // 传递依赖结果
 ```
 ✓ "分析特斯拉财务：获取财报(A) + 获取竞品(B) → 计算增长(C,依赖A) + 计算利润率(D,依赖A) → 对比分析(E,依赖A,B,C,D)"
 ✗ "搜索三个公司" (无依赖，用 Parallel)
-✗ "动态决定下一步" (无法提前规划，用 Supervisor)
+✗ "动态决定下一步" (无法提前规划，用 Swarm)
 ```
 
-### 何时使用 Supervisor 模式
+### 何时使用 Swarm 模式
 
 **使用场景**：
-- 任务数量/类型不确定
-- 需要动态分配任务
-- Agent 间需要实时通信
-- 部分失败需要智能降级
+- 任务需要动态调整（中途加人、改计划）
+- Agent 间需要共享数据和通信（Workspace + P2P）
+- 需要人类实时参与（human_input 事件）
+- 复杂协作任务，质量需要把关
 
 **不适用场景**：
 - 任务可以提前完全规划
@@ -400,8 +400,8 @@ PassDependencyResults:  true   // 传递依赖结果
 
 **成本考量**：
 - 调度开销: +20-30% token
-- Supervisor 决策: 每轮 ~1000 tokens
-- 适合: 复杂、动态场景
+- Lead 决策: 每轮 ~1000 tokens
+- 适合: 复杂、动态、需要人工反馈的场景
 
 **示例**：
 ```
@@ -582,7 +582,7 @@ Debate:     Base × NumDebaters × MaxRounds
 Parallel:   Base × NumTasks / MaxConcurrency (时间优化)
 Sequential: Base × NumTasks (时间累加)
 DAG:        Base × NumTasks × 0.6-0.8 (部分并行)
-Supervisor: Base × (NumAgents + SupervisorOverhead)
+Swarm:      Base × (NumAgents + LeadOverhead)
 ```
 
 ---
@@ -601,7 +601,7 @@ Supervisor: Base × (NumAgents + SupervisorOverhead)
 | **数学推理** | CoT | 展示推理过程 | 第 12 章 |
 | **文档生成** | Planning + Reflection | 结构化 + 质量保证 | 第 10、11 章 |
 | **数据分析** | Planning + DAG | 拆解 + 并行处理 | 第 10、14 章 |
-| **客服路由** | Supervisor 或 Handoff | 动态分配或专业化 | 第 15、16 章 |
+| **客服路由** | Swarm 或 Handoff | 动态分配或专业化 | 第 15、16 章 |
 | **工作流执行** | DAG | 固定流程 + 依赖管理 | 第 14 章 |
 
 ### 按约束条件选择
@@ -619,7 +619,7 @@ Supervisor: Base × (NumAgents + SupervisorOverhead)
 | 团队阶段 | 推荐起步 | 逐步引入 | 暂缓引入 |
 |---------|---------|---------|---------|
 | **探索期** | ReAct、CoT | Planning | ToT、Debate |
-| **成长期** | Planning、Reflection | DAG、Supervisor | - |
+| **成长期** | Planning、Reflection | DAG、Swarm | - |
 | **成熟期** | 全套模式 | 自定义模式 | - |
 
 ---
@@ -677,11 +677,11 @@ Debate (3 视角: 性能优先、成本优先、安全优先)
 
 **需求**：根据用户问题路由到不同专家 Agent
 
-**初步选择**：Supervisor（动态路由）
+**初步选择**：Swarm（动态路由）
 
 **优化方向**：
-- 路由规则相对固定 → 用 Handoff 而非 Supervisor
-- 节省 Supervisor 决策成本
+- 路由规则相对固定 → 用 Handoff 而非 Swarm
+- 节省 Lead Agent 决策成本
 
 **最终方案**：
 ```

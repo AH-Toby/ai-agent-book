@@ -78,7 +78,7 @@
       <circle cx="25" cy="20" r="18" fill="#db2777"/>
       <text x="25" y="25" class="part-num">5</text>
       <text x="90" y="18" class="part-title">多 Agent 编排</text>
-      <text x="90" y="32" class="label">DAG · Supervisor</text>
+      <text x="90" y="32" class="label">DAG · Swarm</text>
     </g>
     <g transform="translate(20, 135)">
       <circle cx="25" cy="20" r="18" fill="#7c3aed"/>
