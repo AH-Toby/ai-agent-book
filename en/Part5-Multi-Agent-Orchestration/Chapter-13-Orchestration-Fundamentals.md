@@ -1,18 +1,18 @@
 # Chapter 13: Orchestration Fundamentals
 
-> **Multi-Agent orchestration isn't about having a bunch of Agents each doing their own thing—it's about making them collaborate like a symphony orchestra—with a conductor, division of labor, and coordination. But no matter how talented the conductor is, if the musicians are incompetent, it's all for nothing.**
+> **Multi-Agent orchestration isn't about having a bunch of Agents each doing their own thing -- it's about making them collaborate like a symphony orchestra -- with a conductor, division of labor, and coordination. But no matter how talented the conductor is, if the musicians can't play, it's all for nothing.**
 
 ---
 
 > **Quick Track** (Master the core in 5 minutes)
 >
-> 1. Three hard limitations of single Agent: serial execution is slow, shallow depth, single point of failure
-> 2. Three elements of orchestration: task decomposition, Agent assignment, result synthesis
-> 3. Automatic vs configuration: auto-match for simple tasks, explicit configuration for complex tasks
-> 4. Coordination overhead cannot be ignored: for simple tasks, a single Agent is actually faster
-> 5. Orchestration is an architectural decision that requires balancing parallel benefits against coordination overhead
+> 1. Single Agent has hard limitations, but Multi-Agent isn't a silver bullet -- typically consumes 3-10x tokens
+> 2. Three effective scenarios: context isolation, parallelization, specialization
+> 3. Four elements of orchestration: Decompose -> Dispatch -> Coordinate -> Synthesize
+> 4. Split Agents by context boundaries, not by roles
+> 5. Model tiering for routing: small models for simple tasks, large models for complex reasoning
 >
-> **10-minute path**: 13.1-13.3 → 13.5 → Shannon Lab
+> **10-minute path**: 13.1-13.3 -> 13.6 -> Shannon Lab
 
 ---
 
@@ -20,15 +20,15 @@
 
 This chapter addresses one core question: **When a single Agent can't efficiently complete a task, how do you get multiple Agents to collaborate?**
 
-Imagine you're managing a small research project—you need to analyze the EV strategies of three competitors (Tesla, BYD, Rivian). If you're working alone, what would you do?
+Imagine you're managing a small research project -- you need to analyze the EV strategies of three competitors (Tesla, BYD, Rivian). If you're working alone, what would you do?
 
-You'd process them serially: research Tesla today, BYD tomorrow, Rivian the day after. Three days later, you finally have all the information collected, and you can start writing the comparative analysis.
+You'd process them serially: research Tesla today, BYD tomorrow, Rivian the day after. Three days later, you finally have all the information collected and can start writing the comparative analysis.
 
 But what if you had three assistants? You'd have them work simultaneously: Alice researches Tesla, Bob researches BYD, Carol researches Rivian. One day later, all three reports arrive at once, and you just need to synthesize and compare.
 
-Roughly 3× faster.
+3x efficiency gain.
 
-**A single Agent is like working solo—it can complete tasks, but it's inefficient and shallow. Multi-Agent orchestration is about building a team with division of labor and collaboration.**
+**A single Agent is like working solo -- it can complete tasks, but it's inefficient and shallow. Multi-Agent orchestration is about building a team with division of labor and collaboration.**
 
 But building a team isn't as simple as "hiring more people." You need to: assign tasks, coordinate progress, integrate results, and handle conflicts. The Orchestrator is what does this.
 
@@ -38,7 +38,7 @@ Let me cut to the chase: a single Agent has three hard limitations.
 
 ### Limitation One: Serial Execution, Too Inefficient
 
-Searching three companies is completely independent—there are no dependencies. But a single Agent can only do them one after another. What if we parallelize? The difference is obvious:
+Searching three companies is completely independent -- there are no dependencies. But a single Agent can only do them one after another. What if we parallelize? The difference is obvious:
 
 ![Serial vs Parallel Execution Comparison](assets/orchestration-timeline.svg)
 
@@ -46,7 +46,7 @@ Saved 40 seconds. The more tasks, the bigger the gap.
 
 ### Limitation Two: Generalist Doing Specialist Work, Lacks Depth
 
-"Design a business plan for an AI startup"—what does this task require?
+"Design a business plan for an AI startup" -- what does this task require?
 
 - Market analysis: industry size, growth trends, competitive landscape
 - Technical architecture: technology selection, cost estimation, feasibility assessment
@@ -59,7 +59,7 @@ A better approach: 4 specialist Agents, each focused on their area.
 
 ### Limitation Three: Single Point of Failure, No Redundancy
 
-When an Agent goes down—network timeout, LLM error, tool call failure—the entire task fails.
+When an Agent goes down -- network timeout, LLM error, tool call failure -- the entire task fails.
 
 Multi-Agent systems can implement fault tolerance: if one fails, the others continue; critical tasks can have backups.
 
@@ -72,13 +72,83 @@ Multi-Agent systems can implement fault tolerance: if one fails, the others cont
 | **Fault tolerance** | Single point of failure | Redundant fault tolerance |
 | **Cost control** | Unified model | Select model per task (cheaper models for simple tasks) |
 
-> **Note**: Multi-Agent isn't a silver bullet. Coordinating multiple Agents has overhead itself—communication, synchronization, result integration. When tasks are simple, a single Agent is actually faster. Only when tasks are complex enough do multi-Agent benefits outweigh coordination costs. I've seen people split "check the weather" into 3 Agents—completely unnecessary, and actually slower.
+> **Note**: Multi-Agent isn't a silver bullet. Multi-Agent systems typically consume **3-10x more tokens** than a single Agent -- copying context across Agents, coordination messages, and result aggregation all burn tokens.
+>
+> Research has shown that some teams spend months building elaborate Multi-Agent systems, only to find that optimizing a single Agent's prompt achieves the same results. The problem isn't Multi-Agent itself, but **misdiagnosis** -- poor decomposition and coordination overhead exceeding actual work.
+>
+> **Principle: Multi-Agent is a powerful architectural choice, but it needs to be used in the right scenarios.** The next section covers when to use it.
 
 ---
 
-## 13.2 The Orchestrator: Conductor of Multi-Agent Systems
+## 13.2 When Should You Use Multi-Agent?
 
-Multi-Agent systems need a "conductor"—the Orchestrator.
+The extra overhead of Multi-Agent is real, but in the right scenarios, the benefits far outweigh the costs.
+
+In practice, Multi-Agent consistently outperforms single Agent in three scenarios:
+
+### Scenario One: Context Isolation
+
+Subtasks generate large amounts of intermediate data, but the main task only needs a small portion.
+
+For example, a customer support Agent needs to look up order history to diagnose a technical issue. With a single Agent, 2000+ tokens of order details all pile into the context -- but diagnosing the technical issue doesn't need any of that. The context gets "polluted," and reasoning quality degrades.
+
+The Multi-Agent solution: let a sub-agent handle the order lookup in an isolated context, filter, and return only a 50-100 token key summary. The main Agent's context stays clean, and reasoning quality doesn't degrade.
+
+```python
+# Single Agent: everything piled together
+conversation = [
+    # 2000+ token order history all stuffed into context
+    # Subsequent reasoning drowned by irrelevant information
+]
+
+# Multi-Agent: context isolation
+class OrderLookupAgent:
+    def lookup(self, order_id):
+        # Process full order history in isolated context
+        # Return only key summary: 50-100 tokens
+        return {"status": "shipped", "date": "March 5"}
+
+class SupportAgent:
+    def handle(self, user_message):
+        summary = OrderLookupAgent().lookup(order_id)
+        # Main Agent context stays clean
+```
+
+**Signal to look for**: A subtask generates over 1000 tokens of intermediate data, but the main task only needs a small portion.
+
+### Scenario Two: Parallelization
+
+This one is intuitively easy to understand -- multiple independent tasks running simultaneously. But there's a key insight that's often overlooked:
+
+**The core value of parallelization is thoroughness, not speed.**
+
+Parallelization lets you explore a larger information space simultaneously. While total token consumption is higher and total execution time might be longer, the result coverage far exceeds a single Agent.
+
+Typical scenario: Deep Research -- decompose a query -> multiple sub-agents explore different aspects in parallel -> synthesize findings.
+
+### Scenario Three: Specialization
+
+Specialization has three dimensions:
+
+- **Toolset specialization**: When an Agent has 20+ tools, selection accuracy drops significantly. Split 40 tools across 4 specialist Agents (5-10 each), and the selection problem disappears.
+- **System prompt specialization**: Different tasks require conflicting behavior patterns. A customer service Agent needs to be "empathetic and soothing" while also "strictly enforcing refund policies" -- the same Agent develops a split personality.
+- **Domain specialization**: Deep domain knowledge (legal precedents, medical protocols) drowns out a generalist Agent. Specialist Agents carrying focused domain context perform better.
+
+### Decision Checklist
+
+| Signal | Recommendation |
+|--------|---------------|
+| Subtasks generate lots of irrelevant context | Multi-Agent (context isolation) |
+| Tasks decomposable into independent parts for parallel exploration | Multi-Agent (parallelization) |
+| 20+ tools, or conflicting behavior patterns needed | Multi-Agent (specialization) |
+| Simple task, optimizing prompt can solve it | Single Agent first |
+| Subtasks are highly coupled, requiring frequent sync | Splitting actually makes it slower |
+
+---
+
+## 13.3 The Orchestrator: Conductor of Multi-Agent Systems
+
+Multi-Agent systems need a "conductor" -- the Orchestrator.
 
 It doesn't do the actual work, but it decides:
 - How to decompose tasks
@@ -92,7 +162,7 @@ It doesn't do the actual work, but it decides:
 
 **Analogy**: The orchestrator is like a restaurant's head chef.
 
-A customer says "I want a steak dinner." The head chef won't do everything alone—they will:
+A customer says "I want a steak dinner." The head chef won't do everything alone -- they will:
 1. **Decompose**: steak, sides, sauce, dessert
 2. **Dispatch**: steak to the grill station, sides to the cold kitchen, sauce to the sauce chef
 3. **Coordinate**: sauce goes on after the steak is ready, sides and steak come out together
@@ -106,7 +176,7 @@ The head chef doesn't need to know how to make everything, but they need to know
 
 ---
 
-## 13.3 Routing Decisions: Which Strategy to Use?
+## 13.4 Routing Decisions: Which Strategy to Use?
 
 Not all tasks need multi-Agent. The orchestrator's first decision is: **What path should this task take?**
 
@@ -134,8 +204,8 @@ case isSimple:
     // Simple task → Single Agent direct execution
     return SimpleTaskWorkflow(input)
 
-case len(decomp.Subtasks) > 5 || hasDeps:
-    // Complex task or has dependencies → Swarm pattern
+case forceSwarm || needsDynamicCoordination:
+    // Complex collaboration or explicitly specified → Swarm pattern
     return SwarmWorkflow(input)
 
 default:
@@ -157,8 +227,8 @@ Complexity < 0.3 AND single subtask AND no tools? ──Yes──► SimpleTaskW
     No
     │
     ▼
-Subtasks > 5 OR has dependencies? ──Yes──► SwarmWorkflow
-    │                                      (Complex multi-Agent coordination)
+force_swarm OR needs dynamic collaboration? ──Yes──► SwarmWorkflow
+    │                                                (Lead Agent drives collaboration)
     No
     │
     ▼
@@ -172,13 +242,68 @@ DAGWorkflow (default)
 |----------|----------|-----------------|
 | **SimpleTask** | Simple Q&A, single-step tasks | Lightest weight, single Agent |
 | **DAGWorkflow** | 2-5 subtasks, possibly simple dependencies | Parallel/serial/hybrid execution |
-| **Swarm** | 6+ subtasks, complex dependencies, needs dynamic coordination | Team management, mailbox communication |
+| **Swarm** | Complex collaboration, dynamic adjustment, needs human feedback | Lead event loop, Workspace collaboration |
 
 These three strategies will be covered in detail in the following chapters. For now, remember: **The orchestrator automatically selects a strategy based on task complexity**.
 
 ---
 
-## 13.4 Three Execution Modes
+## 13.5 How to Split Agents?
+
+Routing decides "which path to take," but there's a more fundamental question: **How do you divide work among different Agents?**
+
+This is the make-or-break factor for Multi-Agent systems. Split well and you get multiplied efficiency; split poorly and you're worse off than a single Agent.
+
+### Anti-pattern: Splitting by Roles (The "Telephone Game")
+
+The most intuitive split: one Agent for planning, one for implementation, one for testing, one for review.
+
+```
+Planner Agent → Implementer Agent → Tester Agent → Reviewer Agent
+      ↓ handoff          ↓ handoff          ↓ handoff
+   (loses context)    (loses context)    (loses context)
+```
+
+Sounds reasonable, but it's actually a disaster. Each handoff is like "the telephone game" -- a bit of information is lost with each pass. The Tester doesn't know why the Implementer made certain design decisions, and the Reviewer doesn't understand the tradeoffs made during iteration.
+
+The result: **more tokens spent on coordination than on actual work**.
+
+### The Right Approach: Split by Context Boundaries
+
+The Agent handling a feature should also be responsible for testing that feature -- because it already has the implementation context. Only when context can be **truly isolated** is splitting worthwhile.
+
+**Good split boundaries**:
+
+- **Independent research paths**: Researching the Asian market vs. the European market -- mutually independent, completely isolated contexts
+- **Components with clear interfaces**: When API contracts are well-defined, frontend and backend can be developed in parallel
+- **Black-box verification**: Verifiers only need to run tests and report results -- they don't need to know implementation details
+
+**Problematic split boundaries**:
+
+- **Different phases of the same feature**: Planning, implementation, and testing share too much context -- splitting actually reduces efficiency
+- **Tightly coupled components**: Parts that require frequent back-and-forth communication should be in the same Agent
+- **Work requiring shared state**: Agents that need to frequently synchronize understanding should be merged
+
+### The Verification Sub-Agent Pattern
+
+One type of split that works across scenarios: **a dedicated Agent solely responsible for verification**.
+
+Why does it work? Because verification naturally requires minimal context -- the verifier doesn't need to know how the system was built, just what criteria it should meet, then run the tests. This perfectly avoids the "telephone game" problem.
+
+```python
+# Verification sub-agent only needs: artifact to verify + criteria + test tools
+class VerificationAgent:
+    def verify(self, artifact, criteria):
+        # Black-box verification: no implementation context needed
+        results = run_tests(artifact)
+        return {"passed": all_pass(results), "issues": extract_issues(results)}
+```
+
+> **Watch out for Early Victory**: The most common failure mode of verification Agents is running one or two tests and declaring success. Make it explicit in the prompt: "You must run the complete test suite, and only mark as PASSED when everything passes."
+
+---
+
+## 13.6 Three Execution Modes
 
 Regardless of which strategy is chosen, Agents ultimately need to be executed. There are three execution modes:
 
@@ -188,7 +313,7 @@ Use case: Subtasks are mutually independent with no dependencies.
 
 ![Parallel Task Execution](assets/parallel-tasks.svg)
 
-The core is **semaphore control**—limiting the number of Agents executing simultaneously to prevent resource exhaustion.
+The core is **semaphore control** -- limiting the number of Agents executing simultaneously to prevent resource exhaustion.
 
 ```go
 type ParallelConfig struct {
@@ -274,7 +399,7 @@ Use case: Some tasks can run in parallel, some have dependencies.
 
 ![Task Dependency Tree](assets/task-dependency-tree.svg)
 
-The core is **dependency waiting**—tasks can only start after all their dependencies are complete.
+The core is **dependency waiting** -- tasks can only start after all their dependencies are complete.
 
 ```go
 func waitForDependencies(
@@ -319,9 +444,9 @@ func waitForDependencies(
 
 ---
 
-## 13.5 Result Synthesis
+## 13.7 Result Synthesis
 
-Multiple Agents have finished running—how do you integrate the results?
+Multiple Agents have finished running -- how do you integrate the results?
 
 ### The Problem
 
@@ -333,74 +458,19 @@ Raw Agent output is typically:
 
 Users expect: a unified, complete, high-quality answer.
 
-### Preprocessing: Deduplication and Filtering
+### Three-Step Preprocessing
 
-```go
-func preprocessResults(results []AgentResult) []AgentResult {
-    // 1. Exact deduplication (Hash)
-    seen := make(map[string]bool)
-    exact := []AgentResult{}
-    for _, r := range results {
-        hash := computeHash(r.Response)
-        if !seen[hash] {
-            seen[hash] = true
-            exact = append(exact, r)
-        }
-    }
+Before synthesis, do three preprocessing steps:
 
-    // 2. Similarity deduplication (Jaccard > 0.85)
-    similar := []AgentResult{}
-    for _, r := range exact {
-        isDuplicate := false
-        for _, s := range similar {
-            if jaccardSimilarity(r.Response, s.Response) > 0.85 {
-                isDuplicate = true
-                break
-            }
-        }
-        if !isDuplicate {
-            similar = append(similar, r)
-        }
-    }
-
-    // 3. Quality filtering
-    filtered := []AgentResult{}
-    noInfoPatterns := []string{
-        "unable to retrieve",
-        "failed to fetch",
-        "no information available",
-        "unable to access",
-        "not found",
-    }
-    for _, r := range similar {
-        if r.Success && !containsAny(r.Response, noInfoPatterns) {
-            filtered = append(filtered, r)
-        }
-    }
-
-    return filtered
-}
-```
+1. **Exact deduplication**: Hash comparison, remove completely identical results
+2. **Similarity deduplication**: Keep only one result when text similarity exceeds a threshold (e.g., Jaccard > 0.85)
+3. **Quality filtering**: Remove failed results and invalid responses ("unable to retrieve", "not found", etc.)
 
 ### Synthesis Methods
 
-**Simple synthesis**: Direct concatenation
+**Simple synthesis**: Direct concatenation. Suitable when results are already well-formatted.
 
-Suitable when results are already well-formatted:
-
-```go
-func simpleSynthesis(results []AgentResult) string {
-    var parts []string
-    for _, r := range results {
-        parts = append(parts, r.Response)
-    }
-    return strings.Join(parts, "\n\n")
-}
-```
-
-**LLM synthesis**: Intelligent integration
-
-Suitable when you need unified perspective, conflict resolution, and insight generation:
+**LLM synthesis**: Suitable when you need a unified perspective, conflict resolution, and insight generation:
 
 ```go
 func llmSynthesis(query string, results []AgentResult) string {
@@ -424,13 +494,9 @@ Requirements:
 
 ---
 
-## 13.6 Token Budget Allocation
+## 13.8 Cost Control and Model Tiering
 
-Cost control is even more important in multi-Agent scenarios.
-
-### Why?
-
-A single Agent burns 1000 tokens, multi-Agent might burn 5000. Without control, one complex task could use up an entire day's budget.
+In multi-Agent scenarios, cost control is even more important. A single Agent burns 1000 tokens, multi-Agent might burn 5000.
 
 ### Budget Allocation Strategies
 
@@ -470,80 +536,49 @@ func allocateBudgetByComplexity(totalBudget int, subtasks []Subtask) map[string]
 //     Task C (complexity 0.2) → 2000
 ```
 
-Shannon's implementation:
+### Model Tiering: Not Every Task Needs the Most Expensive Model
+
+A more effective cost-saving approach than budget allocation is **Model Tiering** -- using different tiers of models for tasks of different complexity.
+
+| Tier | Suitable Tasks | Characteristics |
+|------|---------------|-----------------|
+| **Small** | Translation, summarization, classification, data extraction | Pattern matching tasks, no deep reasoning chain needed |
+| **Medium** | Analysis, generation, multi-turn conversation | Requires some reasoning capability |
+| **Large** | Complex reasoning, architecture decisions, research analysis | Requires multi-step reasoning chains, handling ambiguous requirements |
+
+The key distinction isn't whether a model is "smart" -- it's whether the task requires **deep reasoning chains**. Translation and classification have bounded answer spaces; a small model is sufficient. But "design a distributed system architecture" requires iterative weighing and backtracking -- that's when you need a large model.
+
+Shannon's approach: use a lightweight model to quickly assess task complexity (latency <1s, cost <$0.01), then select the model tier based on the score. Roughly 50% of requests are handled by Small models, reducing overall cost by 60%+ with no quality loss.
 
 ```go
-// Pass budget from router
-n := len(decomp.Subtasks)
-if n == 0 {
-    n = 1
-}
-agentMax := res.RemainingTaskBudget / n
-
-// Can set cap via environment variable or request context
-if v := os.Getenv("TOKEN_BUDGET_PER_AGENT"); v != "" {
-    if cap, err := strconv.Atoi(v); err == nil && cap > 0 && cap < agentMax {
-        agentMax = cap
+// Shannon's tiered routing (simplified)
+func selectModelTier(complexityScore float64) string {
+    switch {
+    case complexityScore < 0.3:
+        return "small"   // Translation/summarization/classification
+    case complexityScore < 0.5:
+        return "medium"  // Analysis/generation
+    default:
+        return "large"   // Complex reasoning/decisions
     }
 }
-
-input.Context["budget_agent_max"] = agentMax
 ```
 
 ---
 
-## 13.7 Control Signals
+## 13.9 Control Signals
 
 During orchestration, users might want to: pause, resume, or cancel.
 
-### Temporal's Signal Mechanism
+Shannon uses Temporal's Signal mechanism to implement this: at key checkpoints in the orchestration flow (before routing decision, after task decomposition, before entering DAG), it checks for control signals. Upon receiving a pause signal, it waits for resume; upon receiving a cancel signal, it terminates child workflows.
 
-Shannon uses Temporal's Signal mechanism to implement control:
+When the orchestrator launches child workflows, it registers their IDs so that pause/cancel signals can cascade to all running child workflows.
 
-```go
-// Set up control signal handler
-controlHandler := &ControlSignalHandler{
-    WorkflowID: workflowID,
-    AgentID:    "orchestrator",
-}
-controlHandler.Setup(ctx)
-
-// Check signals at key points
-checkpoints := []string{
-    "pre_routing",         // Before routing decision
-    "post_decomposition",  // After task decomposition
-    "pre_dag_workflow",    // Before entering DAG
-}
-
-for _, checkpoint := range checkpoints {
-    if err := controlHandler.CheckPausePoint(ctx, checkpoint); err != nil {
-        return TaskResult{Success: false, ErrorMessage: err.Error()}, err
-    }
-}
-```
-
-### Child Workflow Registration
-
-When the orchestrator launches child workflows, they need to be registered to propagate signals:
-
-```go
-// Launch child workflow
-childFuture := workflow.ExecuteChildWorkflow(ctx, DAGWorkflow, input)
-
-// Get child workflow ID
-var childExec workflow.Execution
-childFuture.GetChildWorkflowExecution().Get(ctx, &childExec)
-
-// Register (so pause/cancel signals propagate to child workflows)
-controlHandler.RegisterChildWorkflow(childExec.ID)
-
-// Unregister after completion
-defer controlHandler.UnregisterChildWorkflow(childExec.ID)
-```
+For the specific implementation, refer to Shannon's `ControlSignalHandler`. The core idea is inserting checkpoints at critical points rather than responding to interrupts at any time.
 
 ---
 
-## 13.8 Complete Example
+## 13.10 Complete Example
 
 Let's tie together everything from above with a complete multi-Agent research task:
 
@@ -610,9 +645,15 @@ Total time: ~45 seconds (serial would take ~75 seconds)
 
 ---
 
-## 13.9 Common Pitfalls
+## 13.11 Common Pitfalls
 
-### Pitfall 1: Over-parallelization
+### Pitfall 1: Splitting Agents by Roles
+
+The "telephone game" from section 13.5 is the most common pitfall. Many people intuitively split by responsibility (planner, coder, tester, reviewer), only to find that each handoff loses context, and coordination overhead exceeds actual work.
+
+**Remember**: Split by context boundaries, not by roles.
+
+### Pitfall 2: Over-parallelization
 
 ```go
 // Dangerous: 100 concurrent, API will rate limit
@@ -624,7 +665,7 @@ config := ParallelConfig{MaxConcurrency: 5}
 
 I've seen people set concurrency to 50, only to get a bunch of 429 Too Many Requests from the LLM API. Worse than serial execution.
 
-### Pitfall 2: Ignoring Failed Tasks
+### Pitfall 3: Ignoring Failed Tasks
 
 ```go
 // Problem: Only process successes, failures are ignored
@@ -642,43 +683,22 @@ if successRate < 0.7 {
 }
 ```
 
-### Pitfall 3: Result Synthesis Loses Information
+### Pitfall 4: Result Synthesis Loses Information
 
 Simple concatenation can lead to:
 - Duplicate information (two Agents both mention "Tesla market cap is $800 billion")
 - Contradictory information (one says 15% growth, another says 12%)
 - Lack of insights (just listing, no comparative analysis)
 
-When using LLM synthesis, the prompt should explicitly require:
+When using LLM synthesis, the prompt should explicitly require eliminating duplicates, flagging contradictions, and generating comparative analysis.
 
-```go
-synthesisPrompt := `Synthesize the following research results:
+### Pitfall 5: Using the Same Model for All Tasks
 
-Requirements:
-1. Eliminate duplicates
-2. Mark contradictions (if any)
-3. Generate a comparative analysis table
-4. Summarize key insights (3-5 items)
-
-...
-`
-```
-
-### Pitfall 4: Poor Budget Allocation
-
-```go
-// Problem: Same budget for simple and complex tasks
-budgetPerAgent := totalBudget / numAgents
-
-// Improvement: Allocate based on estimated tokens per task
-for _, st := range subtasks {
-    budgets[st.ID] = int(float64(totalBudget) * float64(st.EstimatedTokens) / float64(totalEstimated))
-}
-```
+Using the same large model for simple translation tasks and complex architecture design? 100x cost difference. Refer to the model tiering strategy in section 13.8.
 
 ---
 
-## 13.10 Other Framework Implementations
+## 13.12 Other Framework Implementations
 
 Orchestration is the core problem of multi-Agent systems, and each framework has its own approach:
 
@@ -718,15 +738,16 @@ graph.add_edge("research_byd", "synthesize")
 
 ## That's This Chapter
 
-The core message is one sentence: **The Orchestrator is the conductor of multi-Agent systems—decomposing tasks, dispatching execution, coordinating dependencies, synthesizing results**.
+The core message is one sentence: **The Orchestrator is the conductor of multi-Agent systems -- decomposing tasks, dispatching execution, coordinating dependencies, synthesizing results**.
 
 ## Summary
 
-1. **Three limitations of single Agent**: Serial inefficiency, generalist not specialist, single point of failure
-2. **Orchestrator's four responsibilities**: Decompose → Dispatch → Coordinate → Synthesize
-3. **Routing decisions**: Simple tasks use SimpleTask, complex tasks use DAG or Swarm
-4. **Three execution modes**: Parallel (independent tasks), Sequential (chain dependencies), Hybrid (DAG)
-5. **Result synthesis**: Dedup → Filter → LLM integration
+1. **Ask whether you should first**: Multi-Agent consumes 3-10x tokens, optimize single Agent first
+2. **Three effective scenarios**: Context isolation, parallelization, specialization
+3. **Orchestrator's four responsibilities**: Decompose -> Dispatch -> Coordinate -> Synthesize
+4. **Split by context boundaries**: Not by roles, avoid the "telephone game"
+5. **Routing decisions**: Simple tasks use SimpleTask, standard tasks use DAG, complex collaboration uses Swarm
+6. **Model tiering**: Small models for simple tasks, large models for complex reasoning, 60%+ cost reduction
 
 ---
 
@@ -760,14 +781,13 @@ For each task, explain:
 - Which workflow it would use (SimpleTask / DAG / Swarm)
 - Why
 
-### Exercise 2: Concurrency Settings
+### Exercise 2: Split Decision
 
-Assume your LLM API limit is 10 requests per second, each task requires 3 LLM calls, averaging 5 seconds each.
+Evaluate whether the following split strategies are reasonable, and explain why:
 
-Questions:
-1. If you have 20 subtasks, what should MaxConcurrency be?
-2. What happens if you set it too high?
-3. What happens if you set it too low?
+1. One Agent writes code, one Agent writes tests, one Agent does code review
+2. One Agent researches the Asian market, one Agent researches the European market, one Agent does synthesis analysis
+3. One Agent handles CRM operations (10 tools), one Agent handles marketing automation (12 tools)
 
 ### Exercise 3 (Advanced): Design a Synthesis Prompt
 
@@ -793,7 +813,7 @@ Requirements:
 
 The orchestrator decides "who does what," but "how to do it" is still unresolved.
 
-When tasks have complex dependencies—A waits for B, B waits for C, C can run in parallel with D—simple serial or parallel execution won't cut it.
+When tasks have complex dependencies -- A waits for B, B waits for C, C can run in parallel with D -- simple serial or parallel execution won't cut it.
 
 The next chapter covers **DAG Workflows**: using directed acyclic graphs to model task dependencies and implement intelligent scheduling.
 
