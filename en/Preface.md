@@ -6,7 +6,7 @@ In the second half of 2025, I shifted from explaining AI theory to engineering A
 
 When I needed answers to these questions, I couldn't find them:
 
-- How do multiple Agents collaborate? DAG or Supervisor?
+- How do multiple Agents collaborate? DAG or Swarm?
 - How do you allocate token budgets? Per call or across the whole workflow?
 - What happens when tool execution fails? How do you persist state?
 - How do you do access control and auditing in enterprise environments?

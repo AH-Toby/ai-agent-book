@@ -165,7 +165,7 @@ Note: The L0-L5 classification below is a ruler I drew for discussion convenienc
 | **L1** | Tool Agent | Need to check weather | Call API and return result | GPTs Actions |
 | **L2** | ReAct Agent | Complex problem | Think -> Act -> Observe, loop | LangChain ReAct |
 | **L3** | Planning Agent | Big task | First decompose plan, then execute each | Focus of this book |
-| **L4** | Multi-Agent | Even bigger task | Multiple Agents divide and collaborate | Shannon Supervisor |
+| **L4** | Multi-Agent | Even bigger task | Multiple Agents divide and collaborate | Shannon Swarm |
 | **L5** | Autonomous | Vague goal | Long-term autonomous operation, self-iteration | Claude Code, Manus |
 
 ### Detailed Explanation of Each Level
@@ -296,7 +296,7 @@ This book uses [Shannon](https://github.com/Kocoro-lab/Shannon) as its reference
 | Simple Q&A + Tool calling | SimpleTask | L1 |
 | Think-Action loop | ReAct | L2 |
 | Complex task decomposition | DAG | L3 |
-| Multi-Agent collaboration | Supervisor | L4 |
+| Multi-Agent collaboration | Swarm | L4 |
 
 ### Not Just Shannon
 
@@ -318,7 +318,7 @@ This section helps you map the concepts from this chapter to Shannon source code
 
 ### Optional Deep Dives (2, pick by interest)
 
-- [`orchestrator_router.go`](https://github.com/Kocoro-lab/Shannon/blob/main/go/orchestrator/internal/workflows/orchestrator_router.go): How the system decides "use ReAct / DAG / Supervisor"
+- [`orchestrator_router.go`](https://github.com/Kocoro-lab/Shannon/blob/main/go/orchestrator/internal/workflows/orchestrator_router.go): How the system decides "use ReAct / DAG / Swarm"
 - [`wasi_sandbox.rs`](https://github.com/Kocoro-lab/Shannon/blob/main/rust/agent-core/src/wasi_sandbox.rs): See what guardrails look like -- how the sandbox isolates tool execution
 
 ---

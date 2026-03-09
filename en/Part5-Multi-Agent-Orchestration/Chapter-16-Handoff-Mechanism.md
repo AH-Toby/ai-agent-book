@@ -413,7 +413,7 @@ func (a *Activities) SendAgentMessage(ctx context.Context, in SendAgentMessageIn
 }
 
 // ========== Task Negotiation Protocol (Advanced Example) ==========
-type TaskRequest struct {  // Supervisor broadcasts request
+type TaskRequest struct {  // Lead Agent broadcasts request
     TaskID, Description string
     Skills              []string  // Required skills
 }
@@ -421,7 +421,7 @@ type TaskOffer struct {    // Agent responds with offer
     RequestID, AgentID string
     Confidence         float64   // Completion confidence
 }
-type TaskAccept struct {   // Supervisor confirms assignment
+type TaskAccept struct {   // Lead Agent confirms assignment
     RequestID, AgentID string
 }
 ```
@@ -699,7 +699,7 @@ Four chapters covering complete multi-Agent orchestration:
 |---------|--------------|-----------------|
 | Ch13 Orchestration Fundamentals | Orchestrator's 4 responsibilities, routing decisions | orchestrator_router.go |
 | Ch14 DAG Workflows | Parallel/Sequential/Hybrid three modes | strategies/dag.go |
-| Ch15 Supervisor | Mailbox system, dynamic teams, smart fault tolerance | supervisor_workflow.go |
+| Ch15 Swarm Pattern | Mailbox system, dynamic teams, smart fault tolerance | swarm_workflow.go |
 | Ch16 Handoff | Data flow declaration, workspace, P2P coordination | activities/p2p.go |
 
 These four components work together:
@@ -715,7 +715,7 @@ User Request
     ┌────┴────┐
     ▼         ▼
 ┌───────┐  ┌──────────┐
-│  DAG  │  │Supervisor│  ← Execution engines
+│  DAG  │  │  Swarm   │  ← Execution engines
 └───┬───┘  └────┬─────┘
     │           │
     └─────┬─────┘

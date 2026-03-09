@@ -413,7 +413,7 @@ func (a *Activities) SendAgentMessage(ctx context.Context, in SendAgentMessageIn
 }
 
 // ========== タスク交渉プロトコル（発展的な例）==========
-type TaskRequest struct {  // Supervisor がリクエストをブロードキャスト
+type TaskRequest struct {  // Lead Agent がリクエストをブロードキャスト
     TaskID, Description string
     Skills              []string  // 必要なスキル
 }
@@ -421,7 +421,7 @@ type TaskOffer struct {    // エージェントが提案を返す
     RequestID, AgentID string
     Confidence         float64   // 完了の確信度
 }
-type TaskAccept struct {   // Supervisor が委任を確認
+type TaskAccept struct {   // Lead Agent が委任を確認
     RequestID, AgentID string
 }
 ```
@@ -699,7 +699,7 @@ Go か得意な言語で実装してみよう：
 |----|----------------|--------------|
 | Ch13 編成基礎 | Orchestrator の四つの責務、ルーティング判断 | orchestrator_router.go |
 | Ch14 DAG ワークフロー | Parallel/Sequential/Hybrid の三モード | strategies/dag.go |
-| Ch15 Supervisor | メールボックスシステム、動的チーム、インテリジェントな耐障害性 | supervisor_workflow.go |
+| Ch15 Swarm パターン | イベントループ、動的チーム、収束検出 | swarm_workflow.go |
 | Ch16 Handoff | データフロー宣言、ワークスペース、P2P 調整 | activities/p2p.go |
 
 この四つのコンポーネントが連携して動く：
@@ -715,7 +715,7 @@ Go か得意な言語で実装してみよう：
     ┌────┴────┐
     ▼         ▼
 ┌───────┐  ┌──────────┐
-│  DAG  │  │Supervisor│  <- 実行エンジン
+│  DAG  │  │  Swarm   │  <- 実行エンジン
 └───┬───┘  └────┬─────┘
     │           │
     └─────┬─────┘

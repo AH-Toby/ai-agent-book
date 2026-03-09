@@ -135,8 +135,8 @@ case isSimple:
     return SimpleTaskWorkflow(input)
 
 case len(decomp.Subtasks) > 5 || hasDeps:
-    // Complex task or has dependencies → Supervisor pattern
-    return SupervisorWorkflow(input)
+    // Complex task or has dependencies → Swarm pattern
+    return SwarmWorkflow(input)
 
 default:
     // Standard task → DAG workflow
@@ -157,7 +157,7 @@ Complexity < 0.3 AND single subtask AND no tools? ──Yes──► SimpleTaskW
     No
     │
     ▼
-Subtasks > 5 OR has dependencies? ──Yes──► SupervisorWorkflow
+Subtasks > 5 OR has dependencies? ──Yes──► SwarmWorkflow
     │                                      (Complex multi-Agent coordination)
     No
     │
@@ -172,7 +172,7 @@ DAGWorkflow (default)
 |----------|----------|-----------------|
 | **SimpleTask** | Simple Q&A, single-step tasks | Lightest weight, single Agent |
 | **DAGWorkflow** | 2-5 subtasks, possibly simple dependencies | Parallel/serial/hybrid execution |
-| **Supervisor** | 6+ subtasks, complex dependencies, needs dynamic coordination | Team management, mailbox communication |
+| **Swarm** | 6+ subtasks, complex dependencies, needs dynamic coordination | Team management, mailbox communication |
 
 These three strategies will be covered in detail in the following chapters. For now, remember: **The orchestrator automatically selects a strategy based on task complexity**.
 
@@ -724,7 +724,7 @@ The core message is one sentence: **The Orchestrator is the conductor of multi-A
 
 1. **Three limitations of single Agent**: Serial inefficiency, generalist not specialist, single point of failure
 2. **Orchestrator's four responsibilities**: Decompose → Dispatch → Coordinate → Synthesize
-3. **Routing decisions**: Simple tasks use SimpleTask, complex tasks use DAG or Supervisor
+3. **Routing decisions**: Simple tasks use SimpleTask, complex tasks use DAG or Swarm
 4. **Three execution modes**: Parallel (independent tasks), Sequential (chain dependencies), Hybrid (DAG)
 5. **Result synthesis**: Dedup → Filter → LLM integration
 
@@ -736,7 +736,7 @@ This section helps you map this chapter's concepts to Shannon source code in 10 
 
 ### Required Reading (1 file)
 
-- [`orchestrator_router.go`](https://github.com/Kocoro-lab/Shannon/blob/main/go/orchestrator/internal/workflows/orchestrator_router.go): Find the OrchestratorWorkflow function's routing switch statement, understand how it determines "simple task", "needs Supervisor", and how it delegates to child workflows
+- [`orchestrator_router.go`](https://github.com/Kocoro-lab/Shannon/blob/main/go/orchestrator/internal/workflows/orchestrator_router.go): Find the OrchestratorWorkflow function's routing switch statement, understand how it determines "simple task", "needs Swarm", and how it delegates to child workflows
 
 ### Optional Deep Dives (2 files, pick based on interest)
 
@@ -757,7 +757,7 @@ Analyze which path these tasks would take:
 
 For each task, explain:
 - Expected complexity score range
-- Which workflow it would use (SimpleTask / DAG / Supervisor)
+- Which workflow it would use (SimpleTask / DAG / Swarm)
 - Why
 
 ### Exercise 2: Concurrency Settings

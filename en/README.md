@@ -23,7 +23,7 @@ Most agent tutorials stop at:
 These only let you "use" Agents, not "build" production-grade Agent systems.
 
 Real production systems need to answer:
-- **How do multiple Agents collaborate?** DAG, Supervisor, or Handoff?
+- **How do multiple Agents collaborate?** DAG, Swarm, or Handoff?
 - **How do you control token budgets?** Per call or across the whole workflow?
 - **What happens when tool execution fails?** Retry, degrade, or human intervention?
 - **How do you ensure security?** Sandbox isolation, access control, audit logs
@@ -65,7 +65,7 @@ The book is divided into **9 parts, 30 chapters**:
 | **Part 2** | Tools and Extensions | Function Calling, MCP, Skills, Hooks |
 | **Part 3** | Context and Memory | Context management, Memory architecture, session design |
 | **Part 4** | Single Agent Patterns | Planning, Reflection, Chain-of-Thought |
-| **Part 5** | Multi-Agent Orchestration | DAG, Supervisor, Handoff |
+| **Part 5** | Multi-Agent Orchestration | DAG, Swarm, Handoff |
 | **Part 6** | Advanced Reasoning | Tree-of-Thoughts, Debate, Research |
 | **Part 7** | Production Architecture | Three-layer architecture, Temporal, Observability |
 | **Part 8** | Enterprise Features | Token budget, OPA policy, WASI sandbox, multi-tenancy |
@@ -76,7 +76,7 @@ Part1-Agent-Fundamentals/     Agent concepts, ReAct loop
 Part2-Tools-and-Extensions/   Tools, MCP, Skills, Hooks
 Part3-Context-and-Memory/     Context management, Memory architecture
 Part4-Single-Agent-Patterns/  Planning, Reflection, CoT
-Part5-Multi-Agent-Orchestration/ DAG, Supervisor, Handoff
+Part5-Multi-Agent-Orchestration/ DAG, Swarm, Handoff
 Part6-Advanced-Reasoning/     ToT, Debate, Research
 Part7-Production-Architecture/ Three-layer architecture, Temporal, Observability
 Part8-Enterprise-Features/    Budget control, OPA, WASI sandbox

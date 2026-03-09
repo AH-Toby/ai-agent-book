@@ -285,7 +285,7 @@ Does your task need multiple Agents to collaborate?
           │
           └─ Cannot be fully planned → Need dynamic adjustments?
                                        │
-                                       ├─ Yes → Supervisor (Chapter 15)
+                                       ├─ Yes → Swarm (Chapter 15)
                                        │
                                        └─ No → Need task handoff between Agents?
                                                │
@@ -301,7 +301,7 @@ Does your task need multiple Agents to collaborate?
 | **Parallel** | Low | Low | Independent subtasks executing in parallel | Tasks with dependencies | Ch 14 |
 | **Sequential** | Low | Medium | Strict sequential dependencies | Tasks that can parallelize | Ch 14 |
 | **DAG** | Medium | Medium | Partial parallelism + dependencies | Cannot determine dependencies | Ch 14 |
-| **Supervisor** | High | High | Dynamic task assignment | Can be planned in advance | Ch 15 |
+| **Swarm** | High | High | Dynamic task assignment | Can be planned in advance | Ch 15 |
 | **Handoff** | Low | Medium | Specialized division of labor | No specialization needed | Ch 16 |
 
 ### When to Use Parallel Execution
@@ -363,7 +363,7 @@ Does your task need multiple Agents to collaborate?
 **Not Suitable**:
 - All tasks are independent (use Parallel)
 - All tasks are sequential (use Sequential)
-- Cannot determine dependencies (use Supervisor)
+- Cannot determine dependencies (use Swarm)
 - Too few tasks (<3)
 
 **Cost Considerations**:
@@ -382,10 +382,10 @@ PassDependencyResults:  true   // Pass dependency results
 ```
 ✓ "Analyze Tesla financials: Get financials(A) + Get competitors(B) → Calculate growth(C, depends on A) + Calculate margin(D, depends on A) → Comparative analysis(E, depends on A,B,C,D)"
 ✗ "Search three companies" (no dependencies, use Parallel)
-✗ "Dynamically decide next step" (cannot plan in advance, use Supervisor)
+✗ "Dynamically decide next step" (cannot plan in advance, use Swarm)
 ```
 
-### When to Use Supervisor Pattern
+### When to Use Swarm Pattern
 
 **Use Cases**:
 - Uncertain task count/types
@@ -400,7 +400,7 @@ PassDependencyResults:  true   // Pass dependency results
 
 **Cost Considerations**:
 - Scheduling overhead: +20-30% tokens
-- Supervisor decisions: ~1000 tokens per round
+- Lead Agent decisions: ~1000 tokens per round
 - Suitable for: Complex, dynamic scenarios
 
 **Examples**:
@@ -582,7 +582,7 @@ Debate:     Base × NumDebaters × MaxRounds
 Parallel:   Base × NumTasks / MaxConcurrency (time optimization)
 Sequential: Base × NumTasks (time accumulation)
 DAG:        Base × NumTasks × 0.6-0.8 (partial parallelism)
-Supervisor: Base × (NumAgents + SupervisorOverhead)
+Swarm:      Base × (NumAgents + LeadOverhead)
 ```
 
 ---
@@ -601,7 +601,7 @@ Supervisor: Base × (NumAgents + SupervisorOverhead)
 | **Math reasoning** | CoT | Show reasoning process | Ch 12 |
 | **Documentation generation** | Planning + Reflection | Structured + quality assurance | Ch 10, 11 |
 | **Data analysis** | Planning + DAG | Decomposition + parallel processing | Ch 10, 14 |
-| **Customer service routing** | Supervisor or Handoff | Dynamic assignment or specialization | Ch 15, 16 |
+| **Customer service routing** | Swarm or Handoff | Dynamic assignment or specialization | Ch 15, 16 |
 | **Workflow execution** | DAG | Fixed process + dependency management | Ch 14 |
 
 ### Selection by Constraints
@@ -619,7 +619,7 @@ Supervisor: Base × (NumAgents + SupervisorOverhead)
 | Team Stage | Recommended Start | Gradually Introduce | Defer |
 |------------|------------------|---------------------|-------|
 | **Exploration** | ReAct, CoT | Planning | ToT, Debate |
-| **Growth** | Planning, Reflection | DAG, Supervisor | - |
+| **Growth** | Planning, Reflection | DAG, Swarm | - |
 | **Mature** | Full pattern suite | Custom patterns | - |
 
 ---
@@ -677,11 +677,11 @@ Debate (3 perspectives: performance-first, cost-first, security-first)
 
 **Requirement**: Route user questions to different expert Agents
 
-**Initial Choice**: Supervisor (dynamic routing)
+**Initial Choice**: Swarm (dynamic routing)
 
 **Optimization Direction**:
-- Routing rules relatively fixed → use Handoff over Supervisor
-- Save Supervisor decision cost
+- Routing rules relatively fixed → use Handoff over Swarm
+- Save Lead Agent decision cost
 
 **Final Solution**:
 ```
