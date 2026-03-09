@@ -6,7 +6,7 @@
 
 | Chapter | Title | Core Question |
 |---------|-------|---------------|
-| 07 | Context Window Management | How to keep the most important information within limited tokens? |
+| 07 | Context Engineering | How to fill the context window with just the right information? |
 | 08 | Memory Architecture | How to give Agents short-term and long-term memory? |
 | 09 | Multi-Turn Conversation Design | How to design high-quality session persistence? |
 
