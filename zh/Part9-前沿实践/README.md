@@ -11,6 +11,7 @@
 | 29 | Agentic Coding | 如何构建代码生成Agent？ | `file_ops.py`, `wasi_sandbox.rs` |
 | 30 | Background Agents | 如何实现异步长时任务？ | `schedules/manager.go` |
 | 31 | 分层模型策略 | 如何优化50-70%的成本？ | `config/models.yaml`, `manager.py` |
+| 32 | OpenClaw 时代 | 如何构建本地自主 Agent Harness？ | `shan` CLI — `internal/agent/loop.go` |
 
 ---
 
