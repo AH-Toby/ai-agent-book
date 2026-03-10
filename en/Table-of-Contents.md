@@ -7,8 +7,10 @@
 >
 > - **Human-in-the-Loop**: Chapter 15 (15.12) -- Human-machine collaboration, escalation triggers, interrupt takeover, trust escalation
 > - **MCP Protocol**: Chapter 4 -- Model Context Protocol tool standardization
-> - **Computer Use**: Chapter 27 -- Browser/desktop automation
-> - **Agentic Coding**: Chapter 28 -- Claude Code / Devin mode
+> - **Deep Research**: Chapter 27 -- Systematic deep research, multi-Agent collaboration
+> - **Computer Use**: Chapter 28 -- Browser/desktop automation
+> - **Agentic Coding**: Chapter 29 -- Claude Code / Devin mode
+> - **The OpenClaw Era**: Chapter 32 -- Local Agent Harness, computer control, hooks
 
 ---
 
@@ -44,7 +46,7 @@
 
 | Chapter | Title | Core Content |
 |---------|-------|--------------|
-| Chapter 7 | [Context Window Management](./Part3-Context-and-Memory/Chapter-07-Context-Window-Management.md) | Token limits, context compression, sliding window strategies |
+| Chapter 7 | [Context Engineering](./Part3-Context-and-Memory/Chapter-07-Context-Engineering.md) | Context Engineering, four strategies (Write/Select/Compress/Isolate), Prompt Cache |
 | Chapter 8 | [Memory Architecture](./Part3-Context-and-Memory/Chapter-08-Memory-Architecture.md) | Short-term/long-term memory, vector storage, memory retrieval |
 | Chapter 9 | [Multi-Turn Conversation Design](./Part3-Context-and-Memory/Chapter-09-Multi-Turn-Conversation-Design.md) | Session state, context passing, conversation management |
 
@@ -112,10 +114,12 @@
 
 | Chapter | Title | Core Content |
 |---------|-------|--------------|
-| Chapter 27 | [Computer Use](./Part9-Frontier-Practices/Chapter-27-Computer-Use.md) | Browser automation, desktop operations, GUI interaction |
-| Chapter 28 | [Agentic Coding](./Part9-Frontier-Practices/Chapter-28-Agentic-Coding.md) | Code generation, auto-repair, development assistance |
-| Chapter 29 | [Background Agents](./Part9-Frontier-Practices/Chapter-29-Background-Agents.md) | Background execution, async tasks, long-running processes |
-| Chapter 30 | [Tiered Model Strategy](./Part9-Frontier-Practices/Chapter-30-Tiered-Model-Strategy.md) | Model routing, cost optimization, capability matching |
+| Chapter 27 | [Deep Research](./Part9-Frontier-Practices/Chapter-27-Deep-Research.md) | Systematic deep research, multi-Agent collaboration, coverage evaluation |
+| Chapter 28 | [Computer Use](./Part9-Frontier-Practices/Chapter-28-Computer-Use.md) | Browser automation, desktop operations, GUI interaction |
+| Chapter 29 | [Agentic Coding](./Part9-Frontier-Practices/Chapter-29-Agentic-Coding.md) | Code generation, auto-repair, development assistance |
+| Chapter 30 | [Background Agents](./Part9-Frontier-Practices/Chapter-30-Background-Agents.md) | Background execution, async tasks, long-running processes |
+| Chapter 31 | [Tiered Model Strategy](./Part9-Frontier-Practices/Chapter-31-Tiered-Model-Strategy.md) | Model routing, cost optimization, capability matching |
+| Chapter 32 | [The OpenClaw Era](./Part9-Frontier-Practices/Chapter-32-The-OpenClaw-Era.md) | Local Agent Harness, computer control (AX Tree + coordinates), Hooks, permission engine, loop detection |
 
 ---
 

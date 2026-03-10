@@ -11,6 +11,7 @@
 | 29 | Agentic Coding | どうやってコード生成エージェントを構築するか？ | `file_ops.py`, `wasi_sandbox.rs` |
 | 30 | Background Agents | 非同期な長時間タスクをどう実装するか？ | `schedules/manager.go` |
 | 31 | 階層型モデル戦略 | どうやって50～70%のコスト削減を実現するか？ | `config/models.yaml`, `manager.py` |
+| 32 | OpenClaw 時代 | ローカル自律エージェントハーネスをどう構築するか？ | `shan` CLI — `internal/agent/loop.go` |
 
 ---
 

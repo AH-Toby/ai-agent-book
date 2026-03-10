@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 360">
+  <defs>
+    <style>
+      .label    { font: 500 10px 'SF Mono','Menlo','Monaco',monospace; fill:#666; text-anchor:middle; letter-spacing:0.5px; }
+      .box-text { font: 600 13px 'Hiragino Sans','Yu Gothic','SF Mono',monospace; fill:#1a1a1a; text-anchor:middle; }
+      .sub-text { font: 400 10px 'Hiragino Sans','Yu Gothic','SF Mono',monospace; fill:#555; text-anchor:start; }
+      .badge    { font: 600 10px 'SF Mono','Menlo','Monaco',monospace; fill:#fff; text-anchor:middle; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#666"/>
+    </marker>
+    <pattern id="dp" width="6" height="6" patternUnits="userSpaceOnUse"><line x1="0" y1="6" x2="6" y2="0" stroke="#93c5fd" stroke-width="0.5"/></pattern>
+    <pattern id="dr" width="6" height="6" patternUnits="userSpaceOnUse"><line x1="0" y1="6" x2="6" y2="0" stroke="#f9a8d4" stroke-width="0.5"/></pattern>
+    <pattern id="dq" width="6" height="6" patternUnits="userSpaceOnUse"><line x1="0" y1="6" x2="6" y2="0" stroke="#6ee7b7" stroke-width="0.5"/></pattern>
+  </defs>
+  <rect width="680" height="360" fill="#fff"/>
+
+  <text x="340" y="28" class="label">記憶ストレージ三層アーキテクチャ / THREE-TIER MEMORY STORAGE</text>
+
+  <rect x="240" y="42" width="200" height="44" fill="#fef3c7" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <text x="340" y="62" class="box-text">エージェント アプリ層</text>
+  <text x="340" y="78" class="label">APPLICATION LAYER</text>
+
+  <line x1="230" y1="86" x2="182" y2="112" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="340" y1="86" x2="340" y2="112" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="450" y1="86" x2="498" y2="112" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- PostgreSQL -->
+  <rect x="40" y="115" width="240" height="90" fill="#dbeafe" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <rect x="40" y="115" width="240" height="90" fill="url(#dp)" rx="2"/>
+  <rect x="40" y="115" width="80" height="20" fill="#3b82f6" stroke="none" rx="2"/>
+  <text x="80" y="129" class="badge">PostgreSQL</text>
+  <text x="160" y="139" class="label">ACID · 永続化</text>
+  <text x="55" y="159" class="sub-text">• 実行履歴 / 監査ログ</text>
+  <text x="55" y="175" class="sub-text">• ユーザー設定</text>
+  <text x="55" y="191" class="sub-text">• トランザクション一貫性</text>
+
+  <!-- Redis -->
+  <rect x="220" y="115" width="240" height="90" fill="#fce7f3" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <rect x="220" y="115" width="240" height="90" fill="url(#dr)" rx="2"/>
+  <rect x="220" y="115" width="50" height="20" fill="#ec4899" stroke="none" rx="2"/>
+  <text x="245" y="129" class="badge">Redis</text>
+  <text x="340" y="139" class="label">ホットデータ · ミリ秒</text>
+  <text x="235" y="159" class="sub-text">• アクティブセッションキャッシュ</text>
+  <text x="235" y="175" class="sub-text">• トークン予算追跡</text>
+  <text x="235" y="191" class="sub-text">• レート制限カウンター</text>
+
+  <!-- Qdrant -->
+  <rect x="400" y="115" width="240" height="90" fill="#d1fae5" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <rect x="400" y="115" width="240" height="90" fill="url(#dq)" rx="2"/>
+  <rect x="400" y="115" width="55" height="20" fill="#10b981" stroke="none" rx="2"/>
+  <text x="427" y="129" class="badge">Qdrant</text>
+  <text x="520" y="139" class="label">ベクトル検索 · 語義</text>
+  <text x="415" y="159" class="sub-text">• 語義記憶検索</text>
+  <text x="415" y="175" class="sub-text">• 圧縮サマリー保存</text>
+  <text x="415" y="191" class="sub-text">• RAG 知識ベース</text>
+
+  <rect x="40" y="215" width="240" height="26" fill="#f8fafc" stroke="#e5e7eb" stroke-width="1" rx="2"/>
+  <text x="160" y="232" class="label">レイテンシ: 10–50ms · 整合性重視</text>
+  <rect x="220" y="215" width="240" height="26" fill="#f8fafc" stroke="#e5e7eb" stroke-width="1" rx="2"/>
+  <text x="340" y="232" class="label">レイテンシ: 1–5ms · 高頻度アクセス</text>
+  <rect x="400" y="215" width="240" height="26" fill="#f8fafc" stroke="#e5e7eb" stroke-width="1" rx="2"/>
+  <text x="520" y="232" class="label">レイテンシ: 5–20ms · 語義検索</text>
+
+  <text x="340" y="272" class="label">記憶タイプマッピング / MEMORY TYPE MAPPING</text>
+  <rect x="40" y="280" width="600" height="62" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1" rx="2"/>
+
+  <rect x="55" y="290" width="120" height="40" fill="#fef3c7" stroke="#1a1a1a" stroke-width="1" rx="2"/>
+  <text x="115" y="307" class="sub-text" text-anchor="middle">作業記憶</text>
+  <text x="115" y="321" class="label">コンテキスト</text>
+
+  <rect x="195" y="290" width="120" height="40" fill="#fce7f3" stroke="#1a1a1a" stroke-width="1" rx="2"/>
+  <text x="255" y="307" class="sub-text" text-anchor="middle">セッション記憶</text>
+  <text x="255" y="321" class="label">Redis</text>
+
+  <rect x="335" y="290" width="120" height="40" fill="#dbeafe" stroke="#1a1a1a" stroke-width="1" rx="2"/>
+  <text x="395" y="307" class="sub-text" text-anchor="middle">長期記憶</text>
+  <text x="395" y="321" class="label">PostgreSQL</text>
+
+  <rect x="475" y="290" width="150" height="40" fill="#d1fae5" stroke="#1a1a1a" stroke-width="1" rx="2"/>
+  <text x="550" y="307" class="sub-text" text-anchor="middle">語義記憶</text>
+  <text x="550" y="321" class="label">Qdrant</text>
+</svg>

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 400">
+  <defs>
+    <style>
+      .label    { font: 500 10px 'SF Mono','Menlo','Monaco',monospace; fill:#666; text-anchor:middle; letter-spacing:0.5px; }
+      .box-text { font: 600 13px 'Hiragino Sans','Yu Gothic','SF Mono',monospace; fill:#1a1a1a; text-anchor:middle; }
+      .sub-text { font: 400 10px 'Hiragino Sans','Yu Gothic','SF Mono',monospace; fill:#555; text-anchor:middle; }
+      .annot    { font: 400 10px 'Hiragino Sans','Yu Gothic','SF Mono',monospace; fill:#1a1a1a; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="680" height="400" fill="#fff"/>
+
+  <text x="340" y="28" class="label">語義検索フロー / SEMANTIC RETRIEVAL FLOW</text>
+
+  <!-- User Query -->
+  <rect x="40" y="50" width="150" height="60" fill="#fce7f3" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <text x="115" y="77" class="box-text">ユーザークエリ</text>
+  <text x="115" y="96" class="label">USER QUERY</text>
+
+  <rect x="40" y="123" width="150" height="36" fill="#f9f9f9" stroke="#e5e7eb" stroke-width="1" rx="2"/>
+  <text x="115" y="140" class="sub-text">"Reactコンポーネントを</text>
+  <text x="115" y="153" class="sub-text">最適化するには？"</text>
+
+  <line x1="190" y1="80" x2="248" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Embedding Model -->
+  <rect x="250" y="50" width="160" height="60" fill="#a5f3fc" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <text x="330" y="74" class="box-text">埋め込みモデル</text>
+  <text x="330" y="94" class="label">EMBEDDING MODEL</text>
+
+  <line x1="410" y1="80" x2="468" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="439" y="71" class="label">ベクトル化</text>
+
+  <!-- Query Vector -->
+  <rect x="470" y="50" width="170" height="60" fill="#fde047" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <text x="555" y="74" class="box-text">クエリベクトル</text>
+  <text x="555" y="94" class="label">QUERY VECTOR [0.12, 0.45...]</text>
+
+  <!-- Divider -->
+  <line x1="40" y1="205" x2="640" y2="205" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="340" y="220" class="label">——— ベクトルデータベース / VECTOR DATABASE ———</text>
+
+  <line x1="555" y1="110" x2="555" y2="240" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="572" y="178" class="annot">検索</text>
+
+  <!-- Qdrant -->
+  <rect x="390" y="243" width="330" height="80" fill="#d1fae5" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <text x="555" y="270" class="box-text">Qdrant ベクトルDB</text>
+  <text x="555" y="288" class="label">COSINE SIMILARITY SEARCH</text>
+  <text x="555" y="310" class="sub-text">コサイン類似度 → Top-K 結果</text>
+
+  <!-- Stored knowledge -->
+  <rect x="40" y="243" width="150" height="60" fill="#fce7f3" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <text x="115" y="268" class="box-text">記憶ストア</text>
+  <text x="115" y="286" class="label">STORED KNOWLEDGE</text>
+
+  <line x1="190" y1="273" x2="248" y2="273" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="250" y="243" width="130" height="60" fill="#a5f3fc" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <text x="315" y="268" class="box-text">埋め込みモデル</text>
+  <text x="315" y="285" class="label">EMBEDDING</text>
+
+  <line x1="380" y1="273" x2="388" y2="273" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Result -->
+  <line x1="555" y1="323" x2="555" y2="350" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="390" y="353" width="330" height="35" fill="#dbeafe" stroke="#1a1a1a" stroke-width="1.5" rx="2"/>
+  <text x="555" y="375" class="sub-text">結果：「フロントエンドレンダリングの最適化...」</text>
+
+  <!-- Threshold note -->
+  <rect x="40" y="325" width="330" height="55" fill="#f9f9f9" stroke="#e5e7eb" stroke-width="1" rx="2"/>
+  <text x="55" y="345" class="annot">類似度閾値 (Threshold):</text>
+  <text x="55" y="362" class="annot">精密タスク（コード検索）→ 0.8以上</text>
+  <text x="55" y="375" class="annot">オープンタスク（創作）  → 0.6以上</text>
+</svg>

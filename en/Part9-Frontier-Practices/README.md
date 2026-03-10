@@ -11,6 +11,7 @@
 | 29 | Agentic Coding | How to build code generation Agents? | `file_ops.py`, `wasi_sandbox.rs` |
 | 30 | Background Agents | How to implement async long-running tasks? | `schedules/manager.go` |
 | 31 | Tiered Model Strategy | How to optimize 50-70% of costs? | `config/models.yaml`, `manager.py` |
+| 32 | The OpenClaw Era | How to build a local autonomous Agent Harness? | `shan` CLI — `internal/agent/loop.go` |
 
 ---
 
