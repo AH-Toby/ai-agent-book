@@ -68,7 +68,7 @@
   <line x1="432" y1="128" x2="498" y2="124" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#arr-out)"/>
   <line x1="432" y1="148" x2="498" y2="178" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#arr-out)"/>
 
-  <!-- shan --mcp-serve label -->
+  <!-- mcp-serve label -->
   <rect x="500" y="210" width="160" height="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" rx="2" stroke-dasharray="4,2"/>
   <text x="580" y="228" class="annot" style="text-anchor:middle">shan --mcp-serve</text>
 
