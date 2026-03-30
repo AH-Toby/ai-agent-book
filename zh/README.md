@@ -57,7 +57,7 @@
 
 ## 内容结构
 
-全书分为 **9 个部分、30 章**：
+全书分为 **9 个部分、33 章**：
 
 | 部分 | 主题 | 核心内容 |
 |------|------|----------|
@@ -172,9 +172,10 @@ AI Agent 领域发展极快。本书对高变动性内容会明确标注：
 | 链接 | 说明 |
 |------|------|
 | [前言](./前言.md) | 为什么写这本书、写作理念、适合谁读 |
-| [完整目录](./TABLE_OF_CONTENTS.md) | 30 章完整目录与学习路径 |
+| [完整目录](./TABLE_OF_CONTENTS.md) | 33 章完整目录与学习路径 |
 | [第 1 章：Agent 的本质](./Part1-Agent基础/第01章：Agent的本质.md) | 开始阅读 |
 | [Shannon OSS](https://github.com/Kocoro-lab/Shannon) | 参考实现代码 |
+| [ShanClaw OSS](https://github.com/Kocoro-lab/ShanClaw) | 本地 Agent Harness 参考实现（→ [第 33 章](Part9-前沿实践/第33章：Building-on-the-Harness-ShanClaw.md)） |
 
 ---
 

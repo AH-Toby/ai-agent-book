@@ -78,7 +78,7 @@ Every chapter ends with a "Chapter Recap" that you can use to verify whether you
 
 ## About the Code
 
-This book uses [Shannon](https://github.com/Kocoro-lab/Shannon) as the reference implementation, but it is **not** a Shannon user manual.
+This book uses [Shannon](https://github.com/Kocoro-lab/Shannon) as the reference implementation, and [ShanClaw](https://github.com/Kocoro-lab/ShanClaw) as the local Agent Harness reference implementation (→ [Chapter 33](Part9-Frontier-Practices/Chapter-33-Building-on-the-Harness-ShanClaw.md)), but it is **not** a framework user manual.
 
 Shannon uses a three-layer architecture:
 

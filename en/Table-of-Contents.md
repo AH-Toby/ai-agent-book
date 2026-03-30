@@ -120,6 +120,7 @@
 | Chapter 30 | [Background Agents](./Part9-Frontier-Practices/Chapter-30-Background-Agents.md) | Background execution, async tasks, long-running processes |
 | Chapter 31 | [Tiered Model Strategy](./Part9-Frontier-Practices/Chapter-31-Tiered-Model-Strategy.md) | Model routing, cost optimization, capability matching |
 | Chapter 32 | [The OpenClaw Era](./Part9-Frontier-Practices/Chapter-32-The-OpenClaw-Era.md) | Local Agent Harness, computer control (AX Tree + coordinates), Hooks, permission engine, loop detection |
+| Chapter 33 | [Building on the Harness: ShanClaw](./Part9-Frontier-Practices/Chapter-33-Building-on-the-Harness-ShanClaw.md) | Named Agents, Skills, Memory persistence, Daemon multi-source routing, scheduled tasks, MCP integration, Cloud Delegation |
 
 ---
 
@@ -137,7 +138,7 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Chapters | 30 chapters |
+| Total Chapters | 33 chapters |
 | Appendices | 3 |
 | Parts | 9 topics |
 | Reference Implementation | [Shannon OSS](https://github.com/Kocoro-lab/Shannon) |
@@ -172,6 +173,6 @@ Goal: Architecture design, governance strategies, secure execution
 
 ### Hot Topics Track (1-2 days)
 ```
-Chapter 4 (MCP) -> Chapter 15 Section 15.12 (HITL) -> Chapter 27 (Computer Use) -> Chapter 28 (Agentic Coding)
+Chapter 4 (MCP) -> Chapter 15 Section 15.12 (HITL) -> Chapter 27 (Deep Research) -> Chapter 28 (Computer Use) -> Chapter 29 (Agentic Coding)
 ```
-Goal: Learn about the hottest Agent topics of 2025-2026 (MCP, Human-in-the-Loop, Computer Use, Agentic Coding)
+Goal: Learn about the hottest Agent topics of 2025-2026 (MCP, Human-in-the-Loop, Deep Research, Computer Use, Agentic Coding)

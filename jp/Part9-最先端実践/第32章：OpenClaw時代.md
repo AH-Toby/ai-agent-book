@@ -569,17 +569,13 @@ OpenClaw 時代の核心は：**信頼できる実行インフラを、自律的
 
 ## 次章予告
 
-これがこの本の最後の章の本文だ。
+この章では Harness のコア——ループ、ツール、権限、フック、ループ検出——を解説した。
 
-ここまで読み切ったなら——Agent の基礎から OpenClaw 時代まで、全道のりを完走したことになる。おめでとう。
+しかし、一つの Agent、一つの Session しか走らせられない Harness はまだプロトタイプに過ぎない。次章では、それをプラットフォームに変える方法を見ていく：マルチ Agent ペルソナ、Session をまたいだ記憶、マルチソースサービング、エコシステム相互運用。
 
-付録 A は本書のコア用語集、付録 B はパターン選択デシジョンツリー、付録 C は 27 の頻出 Q&A だ。
+コード実践：[ShanClaw OSS](https://github.com/Kocoro-lab/ShanClaw)
 
-おすすめ：本を閉じて、何か一つ実装してみよう。
-
-どの章に出てきたパターンでも、動くものを一つ作ることの方が、この本をもう一度読むよりずっと価値がある。
-
-またいつか。
+→ [第 33 章：Building on the Harness: ShanClaw](第33章：Building-on-the-Harness-ShanClaw.md)
 
 ---
 
@@ -595,6 +591,7 @@ Part 9 では AI エージェントの最先端実践を探った：
 | Ch30 | Background Agents | Temporal スケジューリング + 永続化 |
 | Ch31 | 階層型モデル戦略 | スマートルーティング + コスト最適化 |
 | Ch32 | OpenClaw 時代 | ローカル Agent Harness + セキュリティ + ループ制御 |
+| Ch33 | Building on the Harness | Named Agents + Memory + Daemon + MCP + Cloud |
 
 これらの能力と企業級インフラ（Part 7-8）を組み合わせることで、完全な本番グレードの AI エージェントプラットフォームが形成される。
 

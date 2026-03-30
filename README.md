@@ -23,7 +23,7 @@
 
 This book is a practical guide to understanding AI Agent system design patterns, not just another framework tutorial.
 
-**9 Parts, 30 Chapters** covering:
+**9 Parts, 33 Chapters** covering:
 
 | Part | Topic |
 |------|-------|
@@ -41,7 +41,9 @@ This book is a practical guide to understanding AI Agent system design patterns,
 
 ## Reference Implementation
 
-This book uses [Shannon](https://github.com/Kocoro-lab/Shannon) as a reference implementation - a three-layer multi-agent system:
+This book uses [Shannon](https://github.com/Kocoro-lab/Shannon) as a reference implementation for multi-agent orchestration, and [ShanClaw](https://github.com/Kocoro-lab/ShanClaw) as the local Agent Harness reference (→ Chapter 33).
+
+Shannon is a three-layer multi-agent system:
 
 ```
 Orchestrator (Go)    - Orchestration, Budget, Policy

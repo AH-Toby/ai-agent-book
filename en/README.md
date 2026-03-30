@@ -28,7 +28,7 @@ Real production systems need to answer:
 - **What happens when tool execution fails?** Retry, degrade, or human intervention?
 - **How do you ensure security?** Sandbox isolation, access control, audit logs
 
-This book answers these questions, using the open-source project [Shannon](https://github.com/Kocoro-lab/Shannon) as a complete reference implementation.
+This book answers these questions, using the open-source project [Shannon](https://github.com/Kocoro-lab/Shannon) as a complete reference implementation, and [ShanClaw](https://github.com/Kocoro-lab/ShanClaw) as the local Agent Harness reference (→ [Chapter 33](Part9-Frontier-Practices/Chapter-33-Building-on-the-Harness-ShanClaw.md)).
 
 ---
 
@@ -57,7 +57,7 @@ This book answers these questions, using the open-source project [Shannon](https
 
 ## Content Structure
 
-The book is divided into **9 parts, 30 chapters**:
+The book is divided into **9 parts, 33 chapters**:
 
 | Part | Topic | Core Content |
 |------|-------|--------------|
@@ -172,9 +172,10 @@ Core architectural patterns are relatively stable, but specific APIs and tools m
 | Link | Description |
 |------|-------------|
 | [Preface](./Preface.md) | Why I wrote this book, writing philosophy, who should read |
-| [Complete Table of Contents](./Table-of-Contents.md) | Full 30-chapter table of contents and learning paths |
+| [Complete Table of Contents](./Table-of-Contents.md) | Full 33-chapter table of contents and learning paths |
 | [Chapter 1: The Essence of Agents](./Part1-Agent-Fundamentals/Chapter-01-The-Essence-of-Agents.md) | Start reading |
 | [Shannon OSS](https://github.com/Kocoro-lab/Shannon) | Reference implementation code |
+| [ShanClaw OSS](https://github.com/Kocoro-lab/ShanClaw) | Local Agent Harness reference (→ [Chapter 33](Part9-Frontier-Practices/Chapter-33-Building-on-the-Harness-ShanClaw.md)) |
 
 ---
 

@@ -569,14 +569,10 @@ OpenClaw 时代的核心是：**把可靠的执行基础设施，交给一个自
 
 ## 下一章预告
 
-这是本书最后一章正文的内容。
+这一章讲了 Harness 的核心——循环、工具、权限、钩子、循环检测。
 
-如果你已经读到这里——恭喜你完整地走过了从 Agent 基础到 OpenClaw 时代的全部路径。
+但一个只能跑一个 Agent、一个 Session 的 Harness 还只是原型。下一章我们看看怎么把它变成平台：多 Agent 人格、跨 Session 记忆、多源服务、生态互操作。
 
-附录 A 是本书的核心术语表，附录 B 是模式选择决策树，附录 C 是 27 个高频问题解答。
+代码实践：[ShanClaw OSS](https://github.com/Kocoro-lab/ShanClaw)
 
-建议：把书放下，去实现一个。
-
-任何一章里的模式，拿出来做成一个能跑的东西，都比把这本书再读一遍有价值。
-
-再见。
+→ [第 33 章：Building on the Harness: ShanClaw](第33章：Building-on-the-Harness-ShanClaw.md)

@@ -119,6 +119,7 @@
 | 第 30 章 | [Background Agents](./Part9-前沿实践/第30章：Background-Agents.md) | 后台执行、异步任务、长时运行 |
 | 第 31 章 | [分层模型策略](./Part9-前沿实践/第31章：分层模型策略.md) | 模型路由、成本优化、能力匹配 |
 | 第 32 章 | [OpenClaw 时代](./Part9-前沿实践/第32章：OpenClaw时代.md) | 本地 Agent Harness、计算机控制（AX Tree + 坐标）、Hooks、权限引擎、循环检测 |
+| 第 33 章 | [Building on the Harness: ShanClaw](./Part9-前沿实践/第33章：Building-on-the-Harness-ShanClaw.md) | Named Agents、Skills、Memory 持久化、Daemon 多源路由、定时任务、MCP 集成、Cloud Delegation |
 
 ---
 
@@ -136,7 +137,7 @@
 
 | 指标 | 数值 |
 |------|------|
-| 总章节数 | 32 章 |
+| 总章节数 | 33 章 |
 | 附录数 | 3 篇 |
 | Part 数量 | 9 个主题 |
 | 参考实现 | [Shannon OSS](https://github.com/Kocoro-lab/Shannon) |

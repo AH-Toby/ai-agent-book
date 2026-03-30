@@ -569,14 +569,10 @@ See you in the next chapter.
 
 ## What's Next
 
-This is the final main chapter of the book.
+This chapter covered the harness core — the loop, tools, permissions, hooks, loop detection.
 
-If you've made it this far — you've walked the complete path from Agent fundamentals to the OpenClaw Era.
+But a harness that only runs one agent in one session is still a prototype. The next chapter shows how to turn it into a platform: multi-agent personas, cross-session memory, multi-source serving, and ecosystem interop.
 
-Appendix A is the book's core glossary. Appendix B is the pattern selection decision tree. Appendix C answers 27 frequently asked questions.
+Code practice: [ShanClaw OSS](https://github.com/Kocoro-lab/ShanClaw)
 
-One suggestion: put the book down and build something.
-
-Any pattern from any chapter, turned into something that actually runs, is worth more than reading this book a second time.
-
-See you out there.
+→ [Chapter 33: Building on the Harness: ShanClaw](Chapter-33-Building-on-the-Harness-ShanClaw.md)
