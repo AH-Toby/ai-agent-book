@@ -19,11 +19,11 @@
 
 ## 32.1 The Day Claude Code Arrived
 
-At the end of 2024, Anthropic released Claude Code.
+In February 2025, Anthropic released Claude Code.
 
 I stared at that terminal interface for a long time. An AI autonomously reading files, editing code, and running tests — on my macOS, not in a cloud sandbox. Real projects. Real code. Real CI.
 
-That same week, I watched an OpenClaw demo: AI taking over a browser, clicking through interfaces, filling out forms, confirming with screenshots.
+Months later, I watched an OpenClaw demo: AI taking over a browser, clicking through interfaces, filling out forms, confirming with screenshots.
 
 This wasn't a remote API call. This was **AI running locally, controlling a local computer**.
 

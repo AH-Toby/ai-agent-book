@@ -16,7 +16,7 @@ First week after launch, complaints came in. A middle schooler asked: "Xiao Ming
 
 Agent answered: "11."
 
-Wrong. The correct answer is 8 (15 / 3 = 5, each friend gets 5, Xiao Ming keeps 0, 0 + 8 = 8). But the Agent saw "15" and "3", computed 15 - 3 - 1 = 11, completely misunderstanding the question.
+Wrong. The correct answer is 8 (15 / 3 = 5, 15 - 15 = 0, 0 + 8 = 8). But the Agent saw "15" and "3", computed 15 - 3 - 1 = 11, completely misunderstanding the question.
 
 **This exposed a fundamental LLM problem—it "skips steps," giving answers directly rather than actually reasoning.** For multi-step problems, this step-skipping easily leads to errors.
 
