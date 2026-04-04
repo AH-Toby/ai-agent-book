@@ -68,7 +68,7 @@ Goal: Complete mastery from single Agent to enterprise multi-Agent
 
 **Hot Topics Track (1-2 days):**
 ```
-Chapter 4 (MCP) -> Chapter 27 (Computer Use) -> Chapter 28 (Agentic Coding)
+Chapter 4 (MCP) -> Chapter 28 (Computer Use) -> Chapter 29 (Agentic Coding)
 ```
 Goal: Learn about the hottest Agent topics of 2025-2026
 
