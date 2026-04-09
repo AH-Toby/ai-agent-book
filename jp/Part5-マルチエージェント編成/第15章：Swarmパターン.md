@@ -365,16 +365,16 @@ Lead Agent はタスクを割り当てるだけでなく、品質の検証も担
 Lead は Worker が書いたファイルを直接読み取ることができ、**LLM を呼び出さない**：
 
 ```
-Sub Agent A 报告 idle，声称完成了公司A分析。
+Sub Agent A が idle を報告、企業A分析の完了を主張。
 
-Lead 决策：
-  → file_read: "workspace/company_a_analysis.md"  (0 token)
-  → 文件内容覆盖了产品/定价/技术 → ACCEPT
-  → file_read: "workspace/company_a_patents.md"    (0 token)
-  → 文件只有 3 行 → RETRY，附加指示："专利部分需要更详细"
+Lead の判断：
+  → file_read: "workspace/company_a_analysis.md"
+  → ファイル内容が製品/価格/技術をカバー → ACCEPT
+  → file_read: "workspace/company_a_patents.md"
+  → ファイルがたった3行 → RETRY、追加指示：「特許セクションをもっと詳しく」
 ```
 
-これは C Compiler の教訓が直接反映されている——バリデーターの品質がシステムの品質を決定する。file_read によって Lead はゼロ Token コストで基本的な品質チェックを行い、問題を発見したらすぐにリトライさせる。
+これは C Compiler の教訓が直接反映されている——バリデーターの品質がシステムの品質を決定する。`file_read` 自体はファイル I/O であり、追加の LLM 呼び出しは発生しない——Shannon はこれを FREE に分類している。ファイル内容は Lead のコンテキストに入り input tokens を消費するが、検証 Agent を spawn するのと比べればオーバーヘッドは微々たるものだ。
 
 ### デッドループの防止
 

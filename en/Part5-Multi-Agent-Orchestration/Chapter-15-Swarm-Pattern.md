@@ -368,13 +368,13 @@ The Lead can directly read files written by Workers—**without calling the LLM*
 Sub Agent A reports idle, claiming Company A analysis is complete.
 
 Lead decision:
-  → file_read: "workspace/company_a_analysis.md"  (0 tokens)
+  → file_read: "workspace/company_a_analysis.md"
   → File content covers product/pricing/tech → ACCEPT
-  → file_read: "workspace/company_a_patents.md"    (0 tokens)
+  → file_read: "workspace/company_a_patents.md"
   → File only has 3 lines → RETRY, with instruction: "Patent section needs more detail"
 ```
 
-This is a direct lesson from the C Compiler—verifier quality determines system quality. file_read lets the Lead perform basic quality checks at zero token cost, catching issues and sending work back immediately.
+This is a direct lesson from the C Compiler—verifier quality determines system quality. `file_read` itself is file I/O that triggers no extra LLM calls—Shannon tags it as FREE. The file content does enter the Lead's context and consumes input tokens, but compared to spawning a verification Agent, the overhead is negligible.
 
 ### Preventing Infinite Loops
 

@@ -367,13 +367,13 @@ Lead 可以直接读取 Worker 写的文件，**不调用 LLM**：
 Sub Agent A 报告 idle，声称完成了公司A分析。
 
 Lead 决策：
-  → file_read: "workspace/company_a_analysis.md"  (0 token)
+  → file_read: "workspace/company_a_analysis.md"
   → 文件内容覆盖了产品/定价/技术 → ACCEPT
-  → file_read: "workspace/company_a_patents.md"    (0 token)
+  → file_read: "workspace/company_a_patents.md"
   → 文件只有 3 行 → RETRY，附加指示："专利部分需要更详细"
 ```
 
-这是 C Compiler 教训的直接体现——验证器的质量决定了系统的质量。file_read 让 Lead 以零 Token 成本完成基础质量检查，发现问题立即打回。
+这是 C Compiler 教训的直接体现——验证器的质量决定了系统的质量。`file_read` 本身是文件 I/O，不触发额外的 LLM 调用，Shannon 将它标记为 FREE。文件内容会进入 Lead 上下文消耗 input tokens，但比起 spawn 一个验证 Agent，开销微不足道。
 
 ### 防止死循环
 
